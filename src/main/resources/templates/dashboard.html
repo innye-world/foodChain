@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodChain - 대시보드</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --sidebar-width: 220px;
+            --topbar-height: 52px;
+            --color-primary: #1D9E75;
+            --color-primary-light: #E1F5EE;
+            --color-primary-dark: #0F6E56;
+            --color-danger: #D85A30;
+            --color-danger-light: #FAECE7;
+            --color-bg: #F5F5F3;
+            --color-surface: #FFFFFF;
+            --color-border: rgba(0,0,0,0.08);
+            --color-text: #1a1a1a;
+            --color-text-muted: #888780;
+            --color-text-hint: #B4B2A9;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--color-surface);
+            border-right: 0.5px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 20px 16px 16px;
+            border-bottom: 0.5px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-primary);
+        }
+
+        .logo-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .nav { padding: 12px 0; flex: 1; }
+
+        .nav-divider {
+            height: 0.5px;
+            background: var(--color-border);
+            margin: 8px 12px;
+        }
+
+        .nav-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 16px;
+            font-size: 13px;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--color-text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #F5F5F3;
+            color: var(--color-text);
+        }
+
+        .nav-btn-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn-left svg { width: 16px; height: 16px; }
+
+        .chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .chevron.open { transform: rotate(180deg); }
+
+        .sub-nav {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.25s ease;
+        }
+
+        .sub-nav.open { max-height: 120px; }
+
+        .sub-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px 7px 42px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sub-item:hover { background: #F5F5F3; color: var(--color-text); }
+
+        .sub-item.active {
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        .sub-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* ── Main ── */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .topbar {
+            height: var(--topbar-height);
+            background: var(--color-surface);
+            border-bottom: 0.5px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            flex-shrink: 0;
+        }
+
+        .page-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--color-primary-light);
+            color: var(--color-primary-dark);
+            font-weight: 500;
+        }
+
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #E6F1FB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: #185FA5;
+        }
+
+        /* ── Content ── */
+        .content {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ── Metric Cards ── */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .metric-card {
+            background: var(--color-surface);
+            border: 0.5px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--color-text-muted);
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .metric-sub {
+            font-size: 11px;
+            color: var(--color-text-hint);
+            margin-top: 4px;
+        }
+
+        .metric-up { color: var(--color-primary); }
+        .metric-danger { color: var(--color-danger); }
+
+        /* ── Chart Area ── */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .chart-card {
+            background: var(--color-surface);
+            border: 0.5px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            min-height: 240px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .chart-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .chart-tag {
+            font-size: 11px;
+            color: var(--color-text-hint);
+        }
+
+        .chart-area {
+            flex: 1;
+            border: 1.5px dashed var(--color-border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            color: var(--color-text-hint);
+        }
+
+        .chart-area svg { width: 28px; height: 28px; opacity: 0.5; }
+        .chart-area span { font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-dot"></div>
+        <span class="logo-text">FoodChain</span>
+    </div>
+    <nav class="nav">
+
+        <!-- 상품 관리 -->
+        <div class="nav-item">
+            <button class="nav-btn active" onclick="toggleNav('product')">
+                <span class="nav-btn-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    상품 관리
+                </span>
+                <svg class="chevron open" id="chevron-product" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="sub-nav open" id="sub-product">
+                <a class="sub-item active" th:href="@{/product/type}">
+                    <span class="sub-dot"></span>상품 유형
+                </a>
+                <a class="sub-item" th:href="@{/product}">
+                    <span class="sub-dot"></span>상품 목록
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <!-- 재고 관리 -->
+        <div class="nav-item">
+            <button class="nav-btn" onclick="toggleNav('stock')">
+                <span class="nav-btn-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    재고 관리
+                </span>
+                <svg class="chevron" id="chevron-stock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="sub-nav" id="sub-stock">
+                <a class="sub-item" th:href="@{/stock}">
+                    <span class="sub-dot"></span>재고 현황
+                </a>
+                <a class="sub-item" th:href="@{/stock/history}">
+                    <span class="sub-dot"></span>재고 이력
+                </a>
+            </div>
+        </div>
+
+    </nav>
+</aside>
+
+<!-- ── Main ── -->
+<div class="main">
+    <header class="topbar">
+        <span class="page-title" th:text="${pageTitle} ?: '대시보드'">대시보드</span>
+        <div class="topbar-right">
+            <span class="badge">오늘 입고 3건</span>
+            <div class="avatar">관리</div>
+        </div>
+    </header>
+
+    <div class="content">
+
+        <!-- 메트릭 카드 -->
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">전체 상품</div>
+                <div class="metric-value" th:text="${totalProducts} ?: '128'">128</div>
+                <div class="metric-sub metric-up">↑ 4 이번 주</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">상품 유형</div>
+                <div class="metric-value" th:text="${totalProductTypes} ?: '6'">6</div>
+                <div class="metric-sub" style="color:var(--color-text-hint)">BAB, SNACK 외 4</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">총 재고</div>
+                <div class="metric-value" th:text="${totalStock} ?: '1,042'">1,042</div>
+                <div class="metric-sub metric-up">↑ 정상 범위</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">재고 부족</div>
+                <div class="metric-value metric-danger" th:text="${lowStockCount} ?: '3'">3</div>
+                <div class="metric-sub metric-danger">확인 필요</div>
+            </div>
+        </div>
+
+        <!-- 그래프 영역 -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">입/출고 현황</span>
+                    <span class="chart-tag">최근 7일</span>
+                </div>
+                <div class="chart-area" id="inout-chart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="17" y="4" width="4" height="16"/></svg>
+                    <span>그래프 영역</span>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">유형별 재고 비율</span>
+                    <span class="chart-tag">현재</span>
+                </div>
+                <div class="chart-area" id="type-chart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+                    <span>그래프 영역</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function toggleNav(key) {
+        const sub = document.getElementById('sub-' + key);
+        const chev = document.getElementById('chevron-' + key);
+        const btn = chev.closest('.nav-btn');
+        const isOpen = sub.classList.contains('open');
+        sub.classList.toggle('open', !isOpen);
+        chev.classList.toggle('open', !isOpen);
+        btn.classList.toggle('active', !isOpen);
+    }
+
+    // 현재 URL 기준으로 사이드바 활성화
+    document.addEventListener('DOMContentLoaded', function () {
+        const path = window.location.pathname;
+        document.querySelectorAll('.sub-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === path) {
+                item.classList.add('active');
+                const subNav = item.closest('.sub-nav');
+                const key = subNav.id.replace('sub-', '');
+                subNav.classList.add('open');
+                document.getElementById('chevron-' + key).classList.add('open');
+                subNav.previousElementSibling.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

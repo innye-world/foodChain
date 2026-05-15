@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>상품 유형 목록 · FreshKeep</title>
+	<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+</head>
+<body>
+<main class="page">
+	<header class="header">
+		<div class="brand">FreshKeep</div>
+		<h1>상품 유형 목록</h1>
+		<p class="subtitle">제품 ID 접두 코드와 유형별 발급 순번을 관리합니다.</p>
+	</header>
+
+	<section class="card">
+		<div class="table-wrap" th:if="${!#lists.isEmpty(productTypes)}">
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">유형 코드</th>
+					<th scope="col">유형명</th>
+					<th scope="col">현재 순번</th>
+					<th scope="col">다음 발급 ID</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="type : ${productTypes}">
+					<td th:text="${type.productTypeId}">1</td>
+					<td><span class="type-code" th:text="${type.typeCode}">BAB</span></td>
+					<td th:text="${type.typeName}">밥류</td>
+					<td class="seq" th:text="${type.seq}">0</td>
+					<td>
+						<span class="next-id"
+							  th:text="${T(String).format('%s-%03d', type.typeCode, type.seq + 1)}">
+							BAB-001
+						</span>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="empty" th:if="${#lists.isEmpty(productTypes)}">
+			<strong>등록된 상품 유형이 없습니다.</strong>
+			<p>MariaDB에 기본 유형 데이터를 넣은 뒤 페이지를 새로고침하세요.</p>
+			<code>INSERT INTO product_type (type_code, type_name, seq) VALUES
+  ('BAB', '밥류', 0),
+  ('SNACK', '스낵', 0),
+  ('BEVERAGE', '음료', 0);</code>
+		</div>
+	</section>
+
+	<p class="footer" th:if="${!#lists.isEmpty(productTypes)}">
+		총 <span th:text="${#lists.size(productTypes)}">0</span>건
+	</p>
+</main>
+</body>
+</html>

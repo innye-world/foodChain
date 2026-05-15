@@ -1,0 +1,163 @@
+:root {
+	--bg: #f4f7f6;
+	--surface: #ffffff;
+	--text: #1a2e28;
+	--muted: #5c6f68;
+	--accent: #0d7a5f;
+	--accent-soft: #e6f4ef;
+	--border: #d8e4df;
+	--code-bg: #edf5f2;
+	--shadow: 0 8px 24px rgba(13, 61, 48, 0.08);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+	background: var(--bg);
+	color: var(--text);
+	line-height: 1.5;
+}
+
+.page {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 2.5rem 1.25rem 3rem;
+}
+
+.header {
+	margin-bottom: 2rem;
+}
+
+.brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--accent);
+	margin-bottom: 0.75rem;
+}
+
+.brand::before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--accent);
+}
+
+h1 {
+	margin: 0 0 0.5rem;
+	font-size: 1.75rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+.subtitle {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9375rem;
+}
+
+.card {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	box-shadow: var(--shadow);
+	overflow: hidden;
+}
+
+.table-wrap {
+	overflow-x: auto;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+}
+
+thead {
+	background: var(--accent-soft);
+}
+
+th {
+	padding: 0.875rem 1.25rem;
+	text-align: left;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+
+td {
+	padding: 1rem 1.25rem;
+	border-top: 1px solid var(--border);
+	vertical-align: middle;
+}
+
+tbody tr:hover {
+	background: #fafcfb;
+}
+
+.type-code {
+	display: inline-block;
+	padding: 0.25rem 0.625rem;
+	border-radius: 6px;
+	background: var(--code-bg);
+	font-family: "SF Mono", "Menlo", monospace;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--accent);
+}
+
+.seq {
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+}
+
+.next-id {
+	color: var(--muted);
+	font-size: 0.8125rem;
+	font-family: "SF Mono", "Menlo", monospace;
+}
+
+.empty {
+	padding: 3rem 1.25rem;
+	text-align: center;
+	color: var(--muted);
+}
+
+.empty strong {
+	display: block;
+	margin-bottom: 0.5rem;
+	color: var(--text);
+	font-size: 1rem;
+}
+
+.empty code {
+	display: inline-block;
+	margin-top: 1rem;
+	padding: 0.75rem 1rem;
+	background: var(--code-bg);
+	border-radius: 8px;
+	font-size: 0.75rem;
+	text-align: left;
+	white-space: pre;
+	color: var(--text);
+}
+
+.footer {
+	margin-top: 1.5rem;
+	font-size: 0.8125rem;
+	color: var(--muted);
+	text-align: right;
+}
