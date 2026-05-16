@@ -6,7 +6,9 @@ import com.inhye.foodChain.product.repository.ProductRepository;
 import com.inhye.foodChain.product.repository.ProductTypeRepository;
 import com.inhye.foodChain.stock.domain.StorageType;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +19,23 @@ public class ProductService {
 	private final ProductTypeRepository productTypeRepository;
 	private final ProductRepository productRepository;
 
+	@Transactional(readOnly = true)
+	public List<ProductType> findAllProductTypes() {
+		return productTypeRepository.findAll(Sort.by("typeCode"));
+	}
+
 	@Transactional
-	public Product register(
+	public ProductType registerProductType(String typeCode, String typeName) {
+		ProductType productType = ProductType.builder()
+				.typeCode(typeCode.trim().toUpperCase())
+				.typeName(typeName.trim())
+				.seq(0)
+				.build();
+		return productTypeRepository.save(productType);
+	}
+
+	@Transactional
+	public Product registerProduct(
 			Long productTypeId,
 			String productName,
 			StorageType storageType,

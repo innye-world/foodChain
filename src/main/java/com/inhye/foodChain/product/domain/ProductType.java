@@ -40,6 +40,15 @@ public class ProductType {
 
 	public String issueNextProductId() {
 		seq++;
-		return typeCode + "-" + String.format("%03d", seq);
+		return formatProductId(seq);
+	}
+
+	/** 현재까지 발급된 마지막 상품 ID (미발급 시 '-') */
+	public String currentProductId() {
+		return seq == 0 ? "-" : formatProductId(seq);
+	}
+
+	private String formatProductId(int sequence) {
+		return typeCode + "-" + String.format("%03d", sequence);
 	}
 }
