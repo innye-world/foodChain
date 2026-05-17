@@ -34,6 +34,11 @@ public class ProductService {
 		return productTypeRepository.save(productType);
 	}
 
+	@Transactional(readOnly = true)
+	public List<Product> findAllProducts() {
+		return productRepository.findAllWithProductType();
+	}
+
 	@Transactional
 	public Product registerProduct(
 			Long productTypeId,

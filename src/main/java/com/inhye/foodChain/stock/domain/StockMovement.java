@@ -53,10 +53,16 @@ public class StockMovement {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
+	@Column(name = "modified_at", nullable = false, updatable = false)
+	private LocalDateTime modifiedAt;
+
 	@PrePersist
 	void prePersist() {
 		if (createdAt == null) {
 			createdAt = LocalDateTime.now();
+		}
+		if (modifiedAt == null) {
+			modifiedAt = LocalDateTime.now();
 		}
 	}
 }

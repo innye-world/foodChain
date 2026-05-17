@@ -9,8 +9,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,4 +49,26 @@ public class Product {
 
 	@Column(name = "max_temperature", precision = 4, scale = 1, nullable = false)
 	private BigDecimal maxTemperature;
+
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private LocalDateTime createdAt;
+
+	@Column(name = "modified_at", nullable = false)
+	private LocalDateTime modifiedAt;
+
+	@PrePersist
+	void prePersist() {
+		LocalDateTime now = LocalDateTime.now();
+		if (createdAt == null) {
+			createdAt = now;
+		}
+		if (modifiedAt == null) {
+			modifiedAt = now;
+		}
+	}
+
+	@PreUpdate
+	void preUpdate() {
+		modifiedAt = LocalDateTime.now();
+	}
 }
