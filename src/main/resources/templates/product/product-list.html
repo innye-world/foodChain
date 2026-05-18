@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('상품 목록', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>상품 목록</h1>
+	</header>
+	<p class="list-summary" th:if="${!#lists.isEmpty(products)}">
+		총 <span th:text="${#lists.size(products)}">0</span>건
+	</p>
+	<section class="card">
+		<div class="table-wrap" th:if="${!#lists.isEmpty(products)}">
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">상품 ID</th>
+					<th scope="col">유형</th>
+					<th scope="col">상품명</th>
+					<th scope="col">보관</th>
+					<th scope="col">온도 범위(℃)</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="product : ${products}"
+					th:onclick="|location.href='@{/product/{id}(id=${product.productId})}'|"
+					class="table-row-link">
+					<td>
+						<a th:href="@{/product/{id}(id=${product.productId})}"
+						   class="row-link type-code"
+						   th:text="${product.productId}">BAB-001</a>
+					</td>
+					<td th:text="${product.productType.typeName}">밥류</td>
+					<td th:text="${product.productName}">삼각김밥</td>
+					<td th:text="${product.storageType}">REFRIGERATED</td>
+					<td th:text="${product.minTemperature + ' ~ ' + product.maxTemperature}">0.0 ~ 10.0</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="empty" th:if="${#lists.isEmpty(products)}">
+			<strong>등록된 상품이 없습니다.</strong>
+		</div>
+	</section>
+	<div class="page-actions">
+		<a class="btn btn-primary" th:href="@{/product/form}">등록</a>
+	</div>
+</div>
+</body>
+</html>

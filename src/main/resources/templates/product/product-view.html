@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('상품 상세', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product.css}"/>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>상품 상세</h1>
+	</header>
+
+	<section class="card form-card">
+		<dl class="detail-list">
+
+			<!-- 상품명 헤더 블록 -->
+			<div class="detail-row--header">
+				<dt class="detail-label">상품명</dt>
+				<dd class="detail-value--lg" th:text="${product.productName}">삼각김밥</dd>
+				<div class="detail-meta">
+					<span th:text="'등록 ' + ${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}">등록 2026-05-17 10:00</span>
+					<span th:text="'수정 ' + ${#temporals.format(product.modifiedAt, 'yyyy-MM-dd HH:mm')}">수정 2026-05-17 10:00</span>
+				</div>
+			</div>
+
+			<!-- 2행: 상품 ID + 상품 유형 -->
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>상품 ID</dt>
+					<dd><span class="type-code" th:text="${product.productId}">BAB-001</span></dd>
+				</div>
+				<div class="detail-item">
+					<dt>상품 유형</dt>
+					<dd th:text="${product.productType.typeName + ' (' + product.productType.typeCode + ')'}">밥류 (BAB)</dd>
+				</div>
+			</div>
+
+			<!-- 3행: 보관 유형 + 온도 범위 -->
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>보관 유형</dt>
+					<dd th:text="${product.storageType}">REFRIGERATED</dd>
+				</div>
+				<div class="detail-item">
+					<dt>온도 범위(℃)</dt>
+					<dd th:text="${product.minTemperature + ' ~ ' + product.maxTemperature}">0.0 ~ 10.0</dd>
+				</div>
+			</div>
+
+		</dl>
+
+		<div class="form-actions">
+			<a class="btn btn-secondary" th:href="@{/product}">목록</a>
+		</div>
+	</section>
+</div>
+</body>
+</html>

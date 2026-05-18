@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('상품 유형 등록', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>상품 유형 등록</h1>
+		<p class="subtitle">유형 코드는 제품 ID 접두어로 사용됩니다. (예: BAB → BAB-001)</p>
+	</header>
+
+	<section class="card form-card">
+		<form class="type-form" th:action="@{/api/products/type}" method="post">
+			<div class="form-field">
+				<label for="typeCode">유형 코드</label>
+				<input id="typeCode" name="typeCode" type="text" maxlength="20"
+					   placeholder="예: BAB, SNACK" required/>
+				<p class="field-hint">영문 대문자 권장 · 최대 20자</p>
+			</div>
+
+			<div class="form-field">
+				<label for="typeName">유형명</label>
+				<input id="typeName" name="typeName" type="text" maxlength="50"
+					   placeholder="예: 밥류, 스낵" required/>
+			</div>
+
+			<div class="form-actions">
+				<a class="btn btn-secondary" th:href="@{/product/type}">취소</a>
+				<button class="btn btn-primary" type="submit">저장</button>
+			</div>
+		</form>
+	</section>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside class="sidebar" th:fragment="sidebar">
+	<a class="sidebar-logo" th:href="@{/}">
+		<div class="logo-dot"></div>
+		<span class="logo-text">FoodChain</span>
+	</a>
+	<nav class="nav">
+		<div class="nav-item">
+			<button class="nav-btn" type="button" onclick="toggleNav('product')">
+				<span class="nav-btn-left">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+						<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+						<line x1="3" y1="6" x2="21" y2="6"/>
+						<path d="M16 10a4 4 0 0 1-8 0"/>
+					</svg>
+					상품 관리
+				</span>
+				<svg class="chevron" id="chevron-product" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="6 9 12 15 18 9"/>
+				</svg>
+			</button>
+			<div class="sub-nav" id="sub-product">
+				<a class="sub-item" th:href="@{/product/type}">
+					<span class="sub-dot"></span>상품 유형
+				</a>
+				<a class="sub-item" th:href="@{/product}">
+					<span class="sub-dot"></span>상품 목록
+				</a>
+			</div>
+		</div>
+
+		<div class="nav-divider"></div>
+
+		<div class="nav-item">
+			<button class="nav-btn" type="button" onclick="toggleNav('stock')">
+				<span class="nav-btn-left">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+						<rect x="2" y="7" width="20" height="14" rx="2"/>
+						<path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+					</svg>
+					재고 관리
+				</span>
+				<svg class="chevron" id="chevron-stock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="6 9 12 15 18 9"/>
+				</svg>
+			</button>
+			<div class="sub-nav" id="sub-stock">
+				<a class="sub-item" th:href="@{/stock}">
+					<span class="sub-dot"></span>재고 현황
+				</a>
+				<a class="sub-item" th:href="@{/stock/history}">
+					<span class="sub-dot"></span>재고 이력
+				</a>
+			</div>
+		</div>
+	</nav>
+</aside>
+</body>
+</html>

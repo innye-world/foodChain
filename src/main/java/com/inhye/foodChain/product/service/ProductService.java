@@ -39,6 +39,13 @@ public class ProductService {
 		return productRepository.findAllWithProductType();
 	}
 
+	@Transactional(readOnly = true)
+	public Product findProduct(String productId) {
+		return productRepository
+				.findByIdWithProductType(productId)
+				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+	}
+
 	@Transactional
 	public Product registerProduct(
 			Long productTypeId,

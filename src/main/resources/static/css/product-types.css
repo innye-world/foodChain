@@ -254,3 +254,49 @@ tbody tr:hover {
 	gap: 0.625rem;
 	margin-top: 1.5rem;
 }
+
+.table-row-link {
+	cursor: pointer;
+}
+
+.table-row-link:hover {
+	background: #fafcfb;
+}
+
+.row-link {
+	color: var(--accent);
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.row-link:hover {
+	text-decoration: underline;
+}
+
+.detail-list {
+	margin: 0;
+}
+
+.detail-item {
+	display: grid;
+	grid-template-columns: 8rem 1fr;
+	gap: 0.75rem 1rem;
+	padding: 0.75rem 0;
+	border-bottom: 1px solid var(--border);
+}
+
+.detail-item:last-child {
+	border-bottom: none;
+}
+
+.detail-item dt {
+	margin: 0;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--muted);
+}
+
+.detail-item dd {
+	margin: 0;
+	font-size: 0.9375rem;
+}
