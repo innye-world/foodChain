@@ -38,6 +38,10 @@ out/
 .vscode/
 
 ### Local config ###
+# ~/.gitignore_global 의 *.properties 때문에 공용 properties 는 예외 처리
+!src/main/resources/application.properties
+!src/main/resources/application-prod.properties
+!src/main/resources/application-local.properties.example
 src/main/resources/application-local.properties
 
 ### DB dump ###

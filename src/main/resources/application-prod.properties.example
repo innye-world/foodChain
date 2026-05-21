@@ -1,0 +1,13 @@
+# Railway Variables 에 아래 키로 넣으세요 (값은 예시)
+# DB_URL=jdbc:mysql://HOST:PORT/DATABASE
+# DB_USERNAME=root
+# DB_PASSWORD=your-password
+# SERVER_PUBLIC_URL=https://your-app.up.railway.app  (선택)
+
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+server.forward-headers-strategy=framework
+foodchain.openapi.server-url=${SERVER_PUBLIC_URL:}
