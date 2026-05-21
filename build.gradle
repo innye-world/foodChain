@@ -24,6 +24,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -38,4 +39,13 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootRun {
+	systemProperty 'spring.profiles.active', 'local'
+}
+
+// IntelliJ가 Gradle로 main() 실행할 때도 local 프로필 적용
+tasks.withType(JavaExec).configureEach {
+	systemProperty 'spring.profiles.active', 'local'
 }
