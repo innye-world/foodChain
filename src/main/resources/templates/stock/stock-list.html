@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('상품 목록', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>재고 목록</h1>
+	</header>
+	<p class="list-summary" th:if="${!#lists.isEmpty(stocks)}">
+		총 <span th:text="${#lists.size(stocks)}">0</span>건 · FEFO 정렬 (유통기한 → 입고일)
+	</p>
+	<section class="card">
+		<div class="table-wrap" th:if="${!#lists.isEmpty(stocks)}">
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">상품 ID</th>
+					<th scope="col">상품명</th>
+					<th scope="col">LOT 번호</th>
+					<th scope="col">유통기한</th>
+					<th scope="col">입고일</th>
+					<th scope="col">수량</th>
+					<th scope="col">상태</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="stock : ${stocks}"
+					th:onclick="|location.href='@{/stock/{id}(id=${stock.stockId})}'|"
+					class="table-row-link">
+					<td th:text="${stock.productId}">BAB-001</td>
+					<td th:text="${stock.productName}">삼각김밥</td>
+					<td th:text="${stock.lotNo}">LOT-2605220001</td>
+					<td th:text="${stock.expiryDate}">2026-05-22</td>
+					<td th:text="${#temporals.format(stock.receivedAt, 'yyyy-MM-dd HH:mm')}">2026-05-21 10:00</td>
+					<td th:text="${stock.amount}">100</td>
+					<td th:text="${stock.stockStatus}">AVAILABLE</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="empty" th:if="${#lists.isEmpty(stocks)}">
+			<strong>등록된 재고가 없습니다.</strong>
+		</div>
+	</section>
+	<div class="page-actions">
+		<a class="btn btn-primary" th:href="@{/stock/form}">등록</a>
+	</div>
+</div>
+</body>
+</html>

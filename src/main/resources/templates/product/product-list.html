@@ -30,11 +30,7 @@
 				<tr th:each="product : ${products}"
 					th:onclick="|location.href='@{/product/{id}(id=${product.productId})}'|"
 					class="table-row-link">
-					<td>
-						<a th:href="@{/product/{id}(id=${product.productId})}"
-						   class="row-link type-code"
-						   th:text="${product.productId}">BAB-001</a>
-					</td>
+					<td th:text="${product.productId}">BAB-001</td>
 					<td th:text="${product.productType.typeName}">밥류</td>
 					<td th:text="${product.productName}">삼각김밥</td>
 					<td th:text="${product.storageType}">REFRIGERATED</td>

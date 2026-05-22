@@ -14,7 +14,7 @@ public class StockService {
 	private final StockRepository stockRepository;
 
 	@Transactional(readOnly = true)
-	public List<Stock> findAll() {
-		return stockRepository.findAll();
+	public List<Stock> findAllStocksOrderByFefo() {
+		return stockRepository.findAllOrderByFefo();
 	}
 }
