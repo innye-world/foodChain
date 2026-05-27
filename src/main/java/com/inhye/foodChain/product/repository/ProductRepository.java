@@ -14,4 +14,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
 	@Query("SELECT p FROM Product p JOIN FETCH p.productType WHERE p.productId = :productId")
 	Optional<Product> findByIdWithProductType(@Param("productId") String productId);
+
+	@Query(
+			"""
+			SELECT p FROM Product p JOIN FETCH p.productType pt
+			WHERE pt.typeCode = :typeCode
+			ORDER BY p.productId
+			""")
+	List<Product> findByTypeCode(@Param("typeCode") String typeCode);
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('재고 등록', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+		<script th:src="@{/js/stock-form.js}" defer></script>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>재고 등록</h1>
+		<p class="subtitle">상품 유형을 선택한 뒤 해당 유형의 상품을 고릅니다.</p>
+	</header>
+
+	<section class="card form-card" th:if="${!#lists.isEmpty(productTypes)}">
+		<form id="stock-form" class="type-form" method="post" th:action="@{/api/stocks}" novalidate>
+			<div class="form-field">
+				<label for="typeCode">상품 유형</label>
+				<select id="typeCode" name="typeCode" required>
+					<option value="" disabled selected>유형 선택</option>
+					<option th:each="type : ${productTypes}"
+							th:value="${type.typeCode}"
+							th:text="${type.typeName}">
+						밥류
+					</option>
+				</select>
+			</div>
+
+			<div class="form-field">
+				<label for="productId">상품</label>
+				<select id="productId" name="productId" required disabled>
+					<option value="" disabled selected>먼저 유형을 선택하세요</option>
+				</select>
+				<p id="product-load-hint" class="field-hint" hidden></p>
+			</div>
+
+			<div class="form-field">
+				<label for="lotNo">LOT 번호</label>
+				<input id="lotNo" name="lotNo" type="text" maxlength="20"
+					   placeholder="예: LOT-20250101-001" required/>
+			</div>
+
+			<div class="form-field">
+				<label for="mfgDate">제조일자</label>
+				<input id="mfgDate" name="mfgDate" type="date" required/>
+			</div>
+
+			<div class="form-field">
+				<label for="expiryDate">유통기한</label>
+				<input id="expiryDate" name="expiryDate" type="date" required/>
+			</div>
+
+			<div class="form-field">
+				<label for="amount">수량</label>
+				<input id="amount" name="amount" type="number" min="1" step="1" placeholder="예: 100" required/>
+			</div>
+
+			<div class="form-actions">
+				<a class="btn btn-secondary" th:href="@{/stock}">취소</a>
+				<button class="btn btn-primary" type="submit">저장</button>
+			</div>
+		</form>
+	</section>
+
+	<section class="card form-card empty" th:if="${#lists.isEmpty(productTypes)}">
+		<strong>등록된 상품 유형이 없습니다.</strong>
+		<p>재고를 등록하려면 먼저 상품 유형과 상품을 등록하세요.</p>
+		<div class="form-actions">
+			<a class="btn btn-primary" th:href="@{/product/type/form}">상품 유형 등록</a>
+			<a class="btn btn-secondary" th:href="@{/stock}">목록으로</a>
+		</div>
+	</section>
+</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-	  th:replace="~{fragments/layout :: layout('상품 목록', ~{::head-extra}, ~{::main})}">
+	  th:replace="~{fragments/layout :: layout('재고 목록', ~{::head-extra}, ~{::main})}">
 <head>
 	<th:block th:fragment="head-extra">
 		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
@@ -12,7 +12,7 @@
 		<h1>재고 목록</h1>
 	</header>
 	<p class="list-summary" th:if="${!#lists.isEmpty(stocks)}">
-		총 <span th:text="${#lists.size(stocks)}">0</span>건 · FEFO 정렬 (유통기한 → 입고일)
+		총 <span th:text="${#lists.size(stocks)}">0</span>건
 	</p>
 	<section class="card">
 		<div class="table-wrap" th:if="${!#lists.isEmpty(stocks)}">

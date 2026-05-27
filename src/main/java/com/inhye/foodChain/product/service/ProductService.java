@@ -40,6 +40,11 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Product> findProductsByTypeCode(String typeCode) {
+		return productRepository.findByTypeCode(typeCode.trim().toUpperCase());
+	}
+
+	@Transactional(readOnly = true)
 	public Product findProduct(String productId) {
 		return productRepository
 				.findByIdWithProductType(productId)
