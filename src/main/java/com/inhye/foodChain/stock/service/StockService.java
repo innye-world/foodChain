@@ -41,7 +41,7 @@ public class StockService {
 				.expiryDate(expiryDate)
 				.receivedAt(LocalDateTime.now())
 				.amount(amount)
-				.stockStatus(StockStatus.PENDING_INSPECTION)
+				.stockStatus(StockStatus.AVAILABLE)
 				.build();
 
 		return stockRepository.save(stock);

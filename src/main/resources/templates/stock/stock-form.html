@@ -15,7 +15,7 @@
 	</header>
 
 	<section class="card form-card" th:if="${!#lists.isEmpty(productTypes)}">
-		<form id="stock-form" class="type-form" method="post" th:action="@{/api/stocks}" novalidate>
+		<form id="stock-form" class="type-form" method="post" th:action="@{/stock}" novalidate>
 			<div class="form-field">
 				<label for="typeCode">상품 유형</label>
 				<select id="typeCode" name="typeCode" required>
