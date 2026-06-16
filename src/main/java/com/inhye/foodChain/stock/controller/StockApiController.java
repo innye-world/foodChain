@@ -43,7 +43,7 @@ public class StockApiController {
 
 	@Operation(
 			summary = "재고 입고",
-			description = "새 LOT를 등록합니다. 입고 시 상태는 AVAILABLE이며, receivedAt은 서버 시각으로 기록됩니다.")
+			description = "새 LOT를 등록합니다. 입고 시에는 구역 온도를 입력하고 상품 등록 시에 저장했던 저장 온도와 비교합니다. 저장 온도에 적합하지 않은 상태라면 HOLD로 저장합니다. HOLD로 저장되는 경우에는 재고 이력 데이터에 히스토리를 추가합니다.")
 	@ApiResponses({
 		@ApiResponse(
 				responseCode = "201",
@@ -60,6 +60,7 @@ public class StockApiController {
 						request.lotNo(),
 						request.mfgDate(),
 						request.expiryDate(),
-						request.amount()));
+						request.amount(),
+						request.currentTemperature()));
 	}
 }

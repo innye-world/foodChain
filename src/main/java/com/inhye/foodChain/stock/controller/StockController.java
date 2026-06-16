@@ -2,6 +2,8 @@ package com.inhye.foodChain.stock.controller;
 
 import com.inhye.foodChain.product.service.ProductService;
 import com.inhye.foodChain.stock.service.StockService;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -39,8 +41,9 @@ public class StockController {
 			@RequestParam String lotNo,
 			@RequestParam LocalDate mfgDate,
 			@RequestParam LocalDate expiryDate,
-			@RequestParam int amount) {
-		stockService.registerStock(productId, lotNo, mfgDate, expiryDate, amount);
+			@RequestParam int amount,
+			@RequestParam BigDecimal currentTemperature) {
+		stockService.registerStock(productId, lotNo, mfgDate, expiryDate, amount, currentTemperature);
 		return new RedirectView("/stock");
 	}
 }

@@ -5,6 +5,8 @@ import com.inhye.foodChain.product.repository.ProductRepository;
 import com.inhye.foodChain.stock.domain.Stock;
 import com.inhye.foodChain.stock.domain.StockStatus;
 import com.inhye.foodChain.stock.repository.StockRepository;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,9 +32,21 @@ public class StockService {
 			String lotNo,
 			LocalDate mfgDate,
 			LocalDate expiryDate,
-			int amount) {
+			int amount,
+			BigDecimal currentTemperature) {
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+
+		// 현재 온도가 제품의 적정온도 구간에 들어가 있지않으면 stockStatus는 hold로 저장한다.
+		// Double은 부동소수라서 소숫점이 있는 온도, 무게 객체에는 적합하지 않음
+		BigDecimal minTemperature = product.getMinTemperature();
+		BigDecimal maxTemperature = product.getMaxTemperature();
+		StockStatus stockStatus = StockStatus.AVAILABLE;
+
+		if(currentTemperature.compareTo(minTemperature) < 0
+				|| currentTemperature.compareTo(maxTemperature) > 0) {
+			stockStatus = StockStatus.HOLD;
+		}
 
 		Stock stock = Stock.builder()
 				.product(product)
@@ -41,7 +55,7 @@ public class StockService {
 				.expiryDate(expiryDate)
 				.receivedAt(LocalDateTime.now())
 				.amount(amount)
-				.stockStatus(StockStatus.AVAILABLE)
+				.stockStatus(stockStatus)
 				.build();
 
 		return stockRepository.save(stock);
