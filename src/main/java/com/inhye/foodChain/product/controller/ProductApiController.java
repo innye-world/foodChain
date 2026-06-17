@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -57,11 +58,14 @@ public class ProductApiController {
 				responseCode = "201",
 				description = "등록 성공",
 				content = @Content(schema = @Schema(implementation = ProductTypeResponse.class))),
-		@ApiResponse(responseCode = "400", description = "중복 typeCode 또는 요청 값 오류")
+		@ApiResponse(responseCode = "400", description = "요청 값 오류"),
+		@ApiResponse(responseCode = "409", description = "중복 typeCode"),
+		@ApiResponse(responseCode = "503", description = "데이터베이스 연결 불가"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
 	})
 	@PostMapping("/type")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ProductTypeResponse registerProductType(@RequestBody ProductTypeRegisterRequest request) {
+	public ProductTypeResponse registerProductType(@Valid @RequestBody ProductTypeRegisterRequest request) {
 		return ProductTypeResponse.from(
 				productService.registerProductType(request.typeCode(), request.typeName()));
 	}
@@ -74,11 +78,14 @@ public class ProductApiController {
 				responseCode = "201",
 				description = "등록 성공",
 				content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-		@ApiResponse(responseCode = "400", description = "상품 유형 미존재 또는 요청 값 오류")
+		@ApiResponse(responseCode = "400", description = "요청 값 오류"),
+		@ApiResponse(responseCode = "404", description = "상품 유형 미존재"),
+		@ApiResponse(responseCode = "503", description = "데이터베이스 연결 불가"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
 	})
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ProductResponse registerProduct(@RequestBody ProductRegisterRequest request) {
+	public ProductResponse registerProduct(@Valid @RequestBody ProductRegisterRequest request) {
 		return ProductResponse.from(
 				productService.registerProduct(
 						request.productTypeId(),

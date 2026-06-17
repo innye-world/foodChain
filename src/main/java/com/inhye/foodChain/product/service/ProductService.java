@@ -1,5 +1,6 @@
 package com.inhye.foodChain.product.service;
 
+import com.inhye.foodChain.common.exception.ResourceNotFoundException;
 import com.inhye.foodChain.product.domain.Product;
 import com.inhye.foodChain.product.domain.ProductType;
 import com.inhye.foodChain.product.repository.ProductRepository;
@@ -48,7 +49,7 @@ public class ProductService {
 	public Product findProduct(String productId) {
 		return productRepository
 				.findByIdWithProductType(productId)
-				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+				.orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다: " + productId));
 	}
 
 	@Transactional
@@ -59,7 +60,10 @@ public class ProductService {
 			BigDecimal minTemperature,
 			BigDecimal maxTemperature) {
 		ProductType productType =
-				productTypeRepository.findById(productTypeId).orElseThrow();
+				productTypeRepository
+						.findById(productTypeId)
+						.orElseThrow(
+								() -> new ResourceNotFoundException("상품 유형을 찾을 수 없습니다: " + productTypeId));
 
 		String productId = productType.issueNextProductId();
 		productTypeRepository.save(productType);

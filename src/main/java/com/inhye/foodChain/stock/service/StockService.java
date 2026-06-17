@@ -1,9 +1,13 @@
 package com.inhye.foodChain.stock.service;
 
+import com.inhye.foodChain.common.exception.ResourceNotFoundException;
 import com.inhye.foodChain.product.domain.Product;
 import com.inhye.foodChain.product.repository.ProductRepository;
+import com.inhye.foodChain.stock.domain.MovementType;
 import com.inhye.foodChain.stock.domain.Stock;
+import com.inhye.foodChain.stock.domain.StockMovement;
 import com.inhye.foodChain.stock.domain.StockStatus;
+import com.inhye.foodChain.stock.repository.StockMovementRepository;
 import com.inhye.foodChain.stock.repository.StockRepository;
 
 import java.math.BigDecimal;
@@ -19,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StockService {
 
 	private final StockRepository stockRepository;
+	private final StockMovementRepository stockMovementRepository;
 	private final ProductRepository productRepository;
 
 	@Transactional(readOnly = true)
@@ -35,29 +40,58 @@ public class StockService {
 			int amount,
 			BigDecimal currentTemperature) {
 		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+				.orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다: " + productId));
 
-		// 현재 온도가 제품의 적정온도 구간에 들어가 있지않으면 stockStatus는 hold로 저장한다.
+		// 현재 온도가 제품의 적정온도 구간에 들어가 있지 않으면 stockStatus는 hold로 저장한다.
 		// Double은 부동소수라서 소숫점이 있는 온도, 무게 객체에는 적합하지 않음
 		BigDecimal minTemperature = product.getMinTemperature();
 		BigDecimal maxTemperature = product.getMaxTemperature();
 		StockStatus stockStatus = StockStatus.AVAILABLE;
+		MovementType movementType = MovementType.INBOUND;
+		String reason = "재고 입고";
 
 		if(currentTemperature.compareTo(minTemperature) < 0
 				|| currentTemperature.compareTo(maxTemperature) > 0) {
 			stockStatus = StockStatus.HOLD;
 		}
 
-		Stock stock = Stock.builder()
-				.product(product)
-				.lotNo(lotNo)
-				.mfgDate(mfgDate)
-				.expiryDate(expiryDate)
-				.receivedAt(LocalDateTime.now())
-				.amount(amount)
-				.stockStatus(stockStatus)
-				.build();
+		// 1. 먼저 재고 관리에 데이터 추가
+		Stock stock =
+				stockRepository.save(
+						Stock.builder()
+								.product(product)
+								.lotNo(lotNo)
+								.mfgDate(mfgDate)
+								.expiryDate(expiryDate)
+								.receivedAt(LocalDateTime.now())
+								.amount(amount)
+								.stockStatus(stockStatus)
+								.build());
 
-		return stockRepository.save(stock);
+		// 2. 재고 히스토리 데이터에도 추가 (자주 이슈가 발생하는 배치의 원인 트래킹을 위한 과정)
+		if (stockStatus == StockStatus.HOLD) {
+			movementType = MovementType.HOLD;
+			reason = "입고 구역 온도 부적합: " + currentTemperature
+							+ "℃ (적정 "
+							+ minTemperature
+							+ "~"
+							+ maxTemperature
+							+ "℃)";
+		}
+
+		saveMovement(stock, movementType, amount, reason);
+
+		return stock;
+	}
+
+	private void saveMovement(Stock stock, MovementType movementType, int quantity, String reason) {
+		stockMovementRepository.save(
+				StockMovement.builder()
+						.stock(stock)
+						.productId(stock.getProductId())
+						.movementType(movementType)
+						.quantity(quantity)
+						.reason(reason)
+						.build());
 	}
 }

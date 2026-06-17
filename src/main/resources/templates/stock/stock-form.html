@@ -15,7 +15,8 @@
 	</header>
 
 	<section class="card form-card" th:if="${!#lists.isEmpty(productTypes)}">
-		<form id="stock-form" class="type-form" method="post" th:action="@{/stock}" novalidate>
+		<p id="form-validation-error" class="field-hint form-error" hidden role="alert"></p>
+		<form id="stock-form" class="type-form" method="post" th:action="@{/stock}">
 			<div class="form-field">
 				<label for="typeCode">상품 유형</label>
 				<select id="typeCode" name="typeCode" required>
@@ -50,6 +51,14 @@
 			<div class="form-field">
 				<label for="expiryDate">유통기한</label>
 				<input id="expiryDate" name="expiryDate" type="date" required/>
+				<p id="expiry-date-hint" class="field-hint" hidden></p>
+			</div>
+
+			<div class="form-field">
+				<label for="currentTemperature">입고 구역 온도(℃)</label>
+				<input id="currentTemperature" name="currentTemperature" type="number" step="0.01"
+					   placeholder="예: 4.0" required/>
+				<p class="field-hint">상품 보관 온도 범위를 벗어나면 HOLD로 입고됩니다.</p>
 			</div>
 
 			<div class="form-field">

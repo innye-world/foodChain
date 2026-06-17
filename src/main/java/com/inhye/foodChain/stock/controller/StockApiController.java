@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,11 +50,15 @@ public class StockApiController {
 				responseCode = "201",
 				description = "입고 성공",
 				content = @Content(schema = @Schema(implementation = StockResponse.class))),
-		@ApiResponse(responseCode = "400", description = "요청 값 오류 또는 상품 미존재")
+		@ApiResponse(responseCode = "400", description = "요청 값 오류"),
+		@ApiResponse(responseCode = "404", description = "상품 미존재"),
+		@ApiResponse(responseCode = "409", description = "중복 LOT 등 제약 조건 위반"),
+		@ApiResponse(responseCode = "503", description = "데이터베이스 연결 불가"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
 	})
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public StockResponse registerStock(@RequestBody StockRegisterRequest request) {
+	public StockResponse registerStock(@Valid @RequestBody StockRegisterRequest request) {
 		return StockResponse.from(
 				stockService.registerStock(
 						request.productId(),
