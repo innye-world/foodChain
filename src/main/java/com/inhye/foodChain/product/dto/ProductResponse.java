@@ -12,7 +12,9 @@ public record ProductResponse(
 		@Schema(description = "유형 코드", example = "BAB") String typeCode,
 		@Schema(description = "보관 유형") StorageType storageType,
 		@Schema(description = "최저 보관 온도(℃)") BigDecimal minTemperature,
-		@Schema(description = "최고 보관 온도(℃)") BigDecimal maxTemperature) {
+		@Schema(description = "최고 보관 온도(℃)") BigDecimal maxTemperature,
+		@Schema(description = "출고 경고 임박 일수") int warningThresholdDays,
+		@Schema(description = "출고 경고 잔여 유통기한 비율(%)") BigDecimal warningThresholdPct) {
 
 	public static ProductResponse from(Product product) {
 		return new ProductResponse(
@@ -21,6 +23,8 @@ public record ProductResponse(
 				product.getProductType().getTypeCode(),
 				product.getStorageType(),
 				product.getMinTemperature(),
-				product.getMaxTemperature());
+				product.getMaxTemperature(),
+				product.getWarningThresholdDays(),
+				product.getWarningThresholdPct());
 	}
 }

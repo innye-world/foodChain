@@ -50,6 +50,16 @@ public class Product {
 	@Column(name = "max_temperature", precision = 4, scale = 1, nullable = false)
 	private BigDecimal maxTemperature;
 
+	/** 유통기한 N일 이내 WARNING (FEFO 출고 마감 기준) */
+	@Column(name = "warning_threshold_days", nullable = false)
+	@Builder.Default
+	private int warningThresholdDays = 7;
+
+	/** 잔여 유통기한 N% 이하 WARNING */
+	@Column(name = "warning_threshold_pct", precision = 4, scale = 1, nullable = false)
+	@Builder.Default
+	private BigDecimal warningThresholdPct = new BigDecimal("20.0");
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
@@ -64,6 +74,12 @@ public class Product {
 		}
 		if (modifiedAt == null) {
 			modifiedAt = now;
+		}
+		if (warningThresholdDays <= 0) {
+			warningThresholdDays = 7;
+		}
+		if (warningThresholdPct == null) {
+			warningThresholdPct = new BigDecimal("20.0");
 		}
 	}
 

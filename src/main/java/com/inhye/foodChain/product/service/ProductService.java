@@ -58,7 +58,9 @@ public class ProductService {
 			String productName,
 			StorageType storageType,
 			BigDecimal minTemperature,
-			BigDecimal maxTemperature) {
+			BigDecimal maxTemperature,
+			int warningThresholdDays,
+			BigDecimal warningThresholdPct) {
 		ProductType productType =
 				productTypeRepository
 						.findById(productTypeId)
@@ -75,6 +77,8 @@ public class ProductService {
 				.storageType(storageType)
 				.minTemperature(minTemperature)
 				.maxTemperature(maxTemperature)
+				.warningThresholdDays(warningThresholdDays)
+				.warningThresholdPct(warningThresholdPct)
 				.build();
 
 		return productRepository.save(product);

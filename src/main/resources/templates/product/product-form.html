@@ -57,6 +57,20 @@
 					   placeholder="예: 10.0" required/>
 			</div>
 
+			<div class="form-field">
+				<label for="warningThresholdDays">출고 경고 임박 일수</label>
+				<input id="warningThresholdDays" name="warningThresholdDays" type="number"
+					   min="1" step="1" value="7" required/>
+				<p class="field-hint">유통기한이 N일 이내로 남으면 WARNING 대상 (FEFO 출고 마감 기준)</p>
+			</div>
+
+			<div class="form-field">
+				<label for="warningThresholdPct">출고 경고 잔여 비율(%)</label>
+				<input id="warningThresholdPct" name="warningThresholdPct" type="number"
+					   min="0.1" max="100" step="0.1" value="20.0" required/>
+				<p class="field-hint">전체 유통기한 대비 잔여 %가 N 이하이면 WARNING 대상</p>
+			</div>
+
 			<div class="form-actions">
 				<a class="btn btn-secondary" th:href="@{/product}">취소</a>
 				<button class="btn btn-primary" type="submit">저장</button>

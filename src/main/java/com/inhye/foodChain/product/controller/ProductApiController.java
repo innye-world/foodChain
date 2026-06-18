@@ -92,6 +92,8 @@ public class ProductApiController {
 						request.productName(),
 						request.storageType(),
 						request.minTemperature(),
-						request.maxTemperature()));
+						request.maxTemperature(),
+						request.warningThresholdDays(),
+						request.warningThresholdPct()));
 	}
 }

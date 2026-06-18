@@ -58,9 +58,17 @@ public class ProductController {
 			@RequestParam String productName,
 			@RequestParam StorageType storageType,
 			@RequestParam BigDecimal minTemperature,
-			@RequestParam BigDecimal maxTemperature) {
+			@RequestParam BigDecimal maxTemperature,
+			@RequestParam(defaultValue = "7") int warningThresholdDays,
+			@RequestParam(defaultValue = "20.0") BigDecimal warningThresholdPct) {
 		productService.registerProduct(
-				productTypeId, productName, storageType, minTemperature, maxTemperature);
+				productTypeId,
+				productName,
+				storageType,
+				minTemperature,
+				maxTemperature,
+				warningThresholdDays,
+				warningThresholdPct);
 		return new RedirectView("/product");
 	}
 
