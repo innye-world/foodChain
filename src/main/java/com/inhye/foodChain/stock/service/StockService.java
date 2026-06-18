@@ -31,6 +31,16 @@ public class StockService {
 		return stockRepository.findAllOrderByFefo();
 	}
 
+	/**
+	 * 입고 등록 시에는 무조건 STOCK, STOCK_MOVEMENT 테이블 모두에 데이터를 넣는다.
+	 * @param productId
+	 * @param lotNo
+	 * @param mfgDate
+	 * @param expiryDate
+	 * @param amount
+	 * @param currentTemperature
+	 * @return
+	 */
 	@Transactional
 	public Stock registerStock(
 			String productId,
@@ -82,6 +92,15 @@ public class StockService {
 		saveMovement(stock, movementType, amount, reason);
 
 		return stock;
+	}
+
+	/**
+	 * 매일 자정에 재고의 유통기한 임박 여부에 따라 출고 우선순위를 설정한다.
+	 * TODO : warning 인것 부터 리스트 상위에? 이 안에서는 출고마감일이 가장 급박한 것부터 노출
+	 */
+	@Transactional
+	public void updateStockStatusesByExpiry() {
+		// TODO: product.warningThresholdDays / warningThresholdPct 기준으로 전이
 	}
 
 	private void saveMovement(Stock stock, MovementType movementType, int quantity, String reason) {
