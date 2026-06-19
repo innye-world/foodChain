@@ -80,4 +80,12 @@ public class Stock {
 	public String getProductName() {
 		return product.getProductName();
 	}
+
+	public void updateStatus(StockStatus next) {
+		if (!stockStatus.canTransitionTo(next)) {
+			throw new IllegalStateException(
+					"재고 상태를 변경할 수 없습니다: " + stockStatus + " → " + next);
+		}
+		stockStatus = next;
+	}
 }

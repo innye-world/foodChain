@@ -11,8 +11,10 @@ import com.inhye.foodChain.stock.repository.StockMovementRepository;
 import com.inhye.foodChain.stock.repository.StockRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -95,12 +97,55 @@ public class StockService {
 	}
 
 	/**
-	 * 매일 자정에 재고의 유통기한 임박 여부에 따라 출고 우선순위를 설정한다.
-	 * TODO : warning 인것 부터 리스트 상위에? 이 안에서는 출고마감일이 가장 급박한 것부터 노출
+	 * AVAILABLE·WARNING 재고의 유통기한을 검사해 WARNING·EXPIRED로 갱신한다.
+	 * HOLD는 품질 해제 후 AVAILABLE이 되면 다음 배치에서 처리한다.
 	 */
 	@Transactional
 	public void updateStockStatusesByExpiry() {
-		// TODO: product.warningThresholdDays / warningThresholdPct 기준으로 전이
+		List<Stock> stockList = stockRepository.findActiveStocksForExpiryUpdate();
+		LocalDate today = LocalDate.now();
+
+		for (Stock stock : stockList) {
+			Product product = stock.getProduct();
+			LocalDate expiryDate = stock.getExpiryDate();
+
+			if (!today.isBefore(expiryDate)) {
+				transitionStatus(stock, StockStatus.EXPIRED, "유통기한 도래: " + expiryDate);
+				continue;
+			}
+
+			if (isWithinWarningDays(today, expiryDate, product.getWarningThresholdDays())
+					|| isWithinWarningRemainingPct(
+							today, stock.getMfgDate(), expiryDate, product.getWarningThresholdPct())) {
+				transitionStatus(stock, StockStatus.WARNING, "유통기한 임박 (만료일: " + expiryDate + ")");
+			}
+		}
+	}
+
+	private boolean isWithinWarningDays(LocalDate today, LocalDate expiryDate, int warningThresholdDays) {
+		long daysUntilExpiry = ChronoUnit.DAYS.between(today, expiryDate);
+		return daysUntilExpiry <= warningThresholdDays;
+	}
+
+	private boolean isWithinWarningRemainingPct(
+			LocalDate today, LocalDate mfgDate, LocalDate expiryDate, BigDecimal warningThresholdPct) {
+		long totalShelfLifeDays = ChronoUnit.DAYS.between(mfgDate, expiryDate);
+		if (totalShelfLifeDays <= 0) {
+			return false;
+		}
+		long remainingDays = ChronoUnit.DAYS.between(today, expiryDate);
+		BigDecimal remainingPct = BigDecimal.valueOf(remainingDays)
+				.multiply(BigDecimal.valueOf(100))
+				.divide(BigDecimal.valueOf(totalShelfLifeDays), 1, RoundingMode.HALF_UP);
+		return remainingPct.compareTo(warningThresholdPct) <= 0;
+	}
+
+	private void transitionStatus(Stock stock, StockStatus nextStatus, String reason) {
+		if (stock.getStockStatus() == nextStatus) {
+			return;
+		}
+		stock.updateStatus(nextStatus);
+		saveMovement(stock, MovementType.ADJUSTMENT, stock.getAmount(), reason);
 	}
 
 	private void saveMovement(Stock stock, MovementType movementType, int quantity, String reason) {

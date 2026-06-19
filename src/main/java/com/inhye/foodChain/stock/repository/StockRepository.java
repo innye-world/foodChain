@@ -15,4 +15,16 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			ORDER BY s.expiryDate ASC, s.receivedAt ASC, s.stockId ASC
 			""")
 	List<Stock> findAllOrderByFefo();
+
+	/** 유통기한 배치 대상: HOLD·종료 상태 제외, product는 threshold 조회용 */
+	@Query(
+			"""
+			SELECT s FROM Stock s
+			JOIN FETCH s.product
+			WHERE s.stockStatus IN (
+				com.inhye.foodChain.stock.domain.StockStatus.AVAILABLE,
+				com.inhye.foodChain.stock.domain.StockStatus.WARNING
+			)
+			""")
+	List<Stock> findActiveStocksForExpiryUpdate();
 }
