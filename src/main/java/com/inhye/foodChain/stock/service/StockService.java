@@ -33,6 +33,11 @@ public class StockService {
 		return stockRepository.findAllOrderByFefo();
 	}
 
+	@Transactional(readOnly = true)
+	public List<StockMovement> findAllMovementsOrderByCreatedAtDesc() {
+		return stockMovementRepository.findAllOrderByCreatedAtDesc();
+	}
+
 	/**
 	 * 입고 등록 시에는 무조건 STOCK, STOCK_MOVEMENT 테이블 모두에 데이터를 넣는다.
 	 * @param productId

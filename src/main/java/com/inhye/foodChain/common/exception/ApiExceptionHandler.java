@@ -3,6 +3,7 @@ package com.inhye.foodChain.common.exception;
 import com.inhye.foodChain.common.dto.ApiErrorResponse;
 import com.inhye.foodChain.product.controller.ProductApiController;
 import com.inhye.foodChain.stock.controller.StockApiController;
+import com.inhye.foodChain.stock.controller.StockMovementApiController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = {StockApiController.class, ProductApiController.class})
+@RestControllerAdvice(
+		assignableTypes = {StockApiController.class, StockMovementApiController.class, ProductApiController.class})
 public class ApiExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)

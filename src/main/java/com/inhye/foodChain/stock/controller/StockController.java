@@ -1,6 +1,7 @@
 package com.inhye.foodChain.stock.controller;
 
 import com.inhye.foodChain.product.service.ProductService;
+import com.inhye.foodChain.stock.dto.StockMovementResponse;
 import com.inhye.foodChain.stock.service.StockService;
 
 import java.math.BigDecimal;
@@ -27,6 +28,16 @@ public class StockController {
 	public String stockList(Model model) {
 		model.addAttribute("stocks", stockService.findAllStocksOrderByFefo());
 		return "stock/stock-list";
+	}
+
+	@GetMapping("/history")
+	public String stockMovementList(Model model) {
+		model.addAttribute(
+				"movements",
+				stockService.findAllMovementsOrderByCreatedAtDesc().stream()
+						.map(StockMovementResponse::from)
+						.toList());
+		return "stock/stock-movement-list";
 	}
 
 	@GetMapping("/form")

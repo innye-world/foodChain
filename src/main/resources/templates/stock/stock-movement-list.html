@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('재고 이력', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>재고 이력</h1>
+	</header>
+	<p class="list-summary" th:if="${!#lists.isEmpty(movements)}">
+		총 <span th:text="${#lists.size(movements)}">0</span>건
+	</p>
+	<section class="card">
+		<div class="table-wrap" th:if="${!#lists.isEmpty(movements)}">
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">일시</th>
+					<th scope="col">유형</th>
+					<th scope="col">상품 ID</th>
+					<th scope="col">상품명</th>
+					<th scope="col">LOT 번호</th>
+					<th scope="col">수량</th>
+					<th scope="col">사유</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="movement : ${movements}">
+					<td th:text="${#temporals.format(movement.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-21 10:00</td>
+					<td th:text="${movement.movementTypeLabel}">입고</td>
+					<td th:text="${movement.productId}">BAB-001</td>
+					<td th:text="${movement.productName}">삼각김밥</td>
+					<td th:text="${movement.lotNo}">LOT-2605220001</td>
+					<td th:text="${movement.quantity}">100</td>
+					<td th:text="${movement.reason}">재고 입고</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="empty" th:if="${#lists.isEmpty(movements)}">
+			<strong>등록된 재고 이력이 없습니다.</strong>
+		</div>
+	</section>
+</div>
+</body>
+</html>
