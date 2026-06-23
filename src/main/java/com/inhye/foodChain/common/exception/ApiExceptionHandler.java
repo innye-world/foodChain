@@ -44,6 +44,12 @@ public class ApiExceptionHandler {
 		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
 	}
 
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ApiErrorResponse> handleIllegalState(
+			IllegalStateException ex, HttpServletRequest request) {
+		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+	}
+
 	@ExceptionHandler(ConflictException.class)
 	public ResponseEntity<ApiErrorResponse> handleConflict(
 			ConflictException ex, HttpServletRequest request) {

@@ -38,7 +38,10 @@
 					<td th:text="${stock.expiryDate}">2026-05-22</td>
 					<td th:text="${#temporals.format(stock.receivedAt, 'yyyy-MM-dd HH:mm')}">2026-05-21 10:00</td>
 					<td th:text="${stock.amount}">100</td>
-					<td th:text="${stock.stockStatus}">AVAILABLE</td>
+					<td>
+						<span th:text="${stock.stockStatus.displayName}"
+							  th:class="${stock.stockStatus.name() == 'HOLD'} ? 'stock-status stock-status--hold' : 'stock-status'">정상</span>
+					</td>
 				</tr>
 				</tbody>
 			</table>

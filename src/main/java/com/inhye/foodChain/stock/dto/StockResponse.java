@@ -16,9 +16,11 @@ public record StockResponse(
 		@Schema(description = "유통기한") LocalDate expiryDate,
 		@Schema(description = "입고일시") LocalDateTime receivedAt,
 		@Schema(description = "수량", example = "100") int amount,
-		@Schema(description = "재고 상태") StockStatus stockStatus) {
+		@Schema(description = "재고 상태") StockStatus stockStatus,
+		@Schema(description = "재고 상태 표시명", example = "정상") String stockStatusLabel) {
 
 	public static StockResponse from(Stock stock) {
+		StockStatus stockStatus = stock.getStockStatus();
 		return new StockResponse(
 				stock.getStockId(),
 				stock.getProductId(),
@@ -28,6 +30,7 @@ public record StockResponse(
 				stock.getExpiryDate(),
 				stock.getReceivedAt(),
 				stock.getAmount(),
-				stock.getStockStatus());
+				stockStatus,
+				stockStatus.getDisplayName());
 	}
 }

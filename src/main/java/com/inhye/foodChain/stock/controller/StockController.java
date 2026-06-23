@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +45,12 @@ public class StockController {
 	public String stockForm(Model model) {
 		model.addAttribute("productTypes", productService.findAllProductTypes());
 		return "stock/stock-form";
+	}
+
+	@GetMapping("/{stockId}")
+	public String stockDetail(@PathVariable Long stockId, Model model) {
+		model.addAttribute("stock", stockService.findStockById(stockId));
+		return "stock/stock-detail";
 	}
 
 	/**

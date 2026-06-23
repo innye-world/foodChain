@@ -38,6 +38,12 @@ public class StockService {
 		return stockMovementRepository.findAllOrderByCreatedAtDesc();
 	}
 
+	@Transactional(readOnly = true)
+	public Stock findStockById(Long stockId) {
+		return stockRepository.findByIdWithProduct(stockId)
+				.orElseThrow(() -> new ResourceNotFoundException("재고를 찾을 수 없습니다: " + stockId));
+	}
+
 	/**
 	 * 입고 등록 시에는 무조건 STOCK, STOCK_MOVEMENT 테이블 모두에 데이터를 넣는다.
 	 * @param productId
@@ -162,5 +168,44 @@ public class StockService {
 						.quantity(quantity)
 						.reason(reason)
 						.build());
+	}
+
+	/**
+	 * HOLD → AVAILABLE (유통기한 경과 시 EXPIRED). 수량 변동 없음.
+	 */
+	@Transactional
+	public Stock releaseStock(Long stockId) {
+		Stock stock = findHoldStock(stockId);
+		LocalDate today = LocalDate.now();
+
+		if (!today.isBefore(stock.getExpiryDate())) {
+			stock.updateStatus(StockStatus.EXPIRED);
+			saveMovement(stock, MovementType.RELEASE, 0, "보류 해제 시 유통기한 경과: " + stock.getExpiryDate());
+		} else {
+			stock.updateStatus(StockStatus.AVAILABLE);
+			saveMovement(stock, MovementType.RELEASE, 0, "품질 보류 해제");
+		}
+		return stock;
+	}
+
+	/** HOLD → DISPOSED, 수량 0. */
+	@Transactional
+	public Stock disposeStock(Long stockId) {
+		Stock stock = findHoldStock(stockId);
+		int disposedQuantity = stock.getAmount();
+
+		stock.setStockStatus(StockStatus.DISPOSED);
+		stock.setAmount(0);
+		saveMovement(stock, MovementType.DISPOSAL, -disposedQuantity, "보류 배치 폐기");
+		return stock;
+	}
+
+	private Stock findHoldStock(Long stockId) {
+		Stock stock = stockRepository.findByIdWithProduct(stockId)
+				.orElseThrow(() -> new ResourceNotFoundException("재고를 찾을 수 없습니다: " + stockId));
+		if (stock.getStockStatus() != StockStatus.HOLD) {
+			throw new IllegalStateException("HOLD 상태인 배치만 처리 가능합니다.");
+		}
+		return stock;
 	}
 }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('재고 상세', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product.css}"/>
+		<script th:src="@{/js/stock-detail.js}" defer></script>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page">
+	<header class="header">
+		<h1>재고 상세</h1>
+	</header>
+
+	<section class="card form-card">
+		<dl class="detail-list">
+
+			<div class="detail-row--header">
+				<dt class="detail-label">LOT 번호</dt>
+				<dd class="detail-value--lg" th:text="${stock.lotNo}">LOT-2605220001</dd>
+				<div class="detail-meta">
+					<span th:text="'입고 ' + ${#temporals.format(stock.receivedAt, 'yyyy-MM-dd HH:mm')}">입고 2026-05-21 10:00</span>
+					<span th:text="'재고 ID ' + ${stock.stockId}">재고 ID 1</span>
+				</div>
+			</div>
+
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>상품 ID</dt>
+					<dd><span class="type-code" th:text="${stock.productId}">BAB-001</span></dd>
+				</div>
+				<div class="detail-item">
+					<dt>상품명</dt>
+					<dd th:text="${stock.productName}">삼각김밥</dd>
+				</div>
+			</div>
+
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>상품 유형</dt>
+					<dd th:text="${stock.product.productType.typeName + ' (' + stock.product.productType.typeCode + ')'}">밥류 (BAB)</dd>
+				</div>
+				<div class="detail-item">
+					<dt>재고 상태</dt>
+					<dd th:text="${stock.stockStatus.displayName}">정상</dd>
+				</div>
+			</div>
+
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>제조일자</dt>
+					<dd th:text="${stock.mfgDate}">2026-05-20</dd>
+				</div>
+				<div class="detail-item">
+					<dt>유통기한</dt>
+					<dd th:text="${stock.expiryDate}">2026-05-22</dd>
+				</div>
+			</div>
+
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>수량</dt>
+					<dd th:text="${stock.amount}">100</dd>
+				</div>
+				<div class="detail-item">
+					<dt>보관 유형</dt>
+					<dd th:text="${stock.product.storageType}">REFRIGERATED</dd>
+				</div>
+			</div>
+
+			<div class="detail-row detail-row--2col">
+				<div class="detail-item">
+					<dt>적정 온도(℃)</dt>
+					<dd th:text="${stock.product.minTemperature + ' ~ ' + stock.product.maxTemperature}">0.0 ~ 10.0</dd>
+				</div>
+				<div class="detail-item">
+					<dt>출고 경고 기준</dt>
+					<dd th:text="${stock.product.warningThresholdDays + '일 이내 / 잔여 ' + stock.product.warningThresholdPct + '% 이하'}">7일 이내 / 잔여 20.0% 이하</dd>
+				</div>
+			</div>
+
+		</dl>
+
+		<section
+				id="hold-actions"
+				class="hold-actions"
+				th:if="${stock.stockStatus.name() == 'HOLD'}"
+				th:data-stock-id="${stock.stockId}">
+			<h2 class="hold-actions-title">품질 관리</h2>
+			<p class="field-hint">품질 확인 후 보류 해제 또는 폐기를 처리합니다.</p>
+			<p id="hold-action-error" class="field-hint form-error" hidden role="alert"></p>
+			<div class="hold-actions-buttons">
+				<button type="button" class="btn btn-primary" id="btn-release">보류 해제</button>
+				<button type="button" class="btn btn-danger" id="btn-dispose">폐기</button>
+			</div>
+		</section>
+
+		<div class="form-actions">
+			<a class="btn btn-secondary" th:href="@{/stock}">목록</a>
+		</div>
+	</section>
+</div>
+</body>
+</html>

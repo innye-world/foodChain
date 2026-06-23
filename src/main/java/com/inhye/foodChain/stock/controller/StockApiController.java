@@ -14,13 +14,15 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "재고", description = "재고 입고·조회 API. 자가품질검사 완료 상품만 입고하며, 목록은 FEFO(유통기한 → 입고일) 순으로 정렬됩니다.")
+@Tag(name = "재고", description = "재고 입고·조회·보류 처리 API. 자가품질검사 완료 상품만 입고하며, 목록은 FEFO(유통기한 → 입고일) 순으로 정렬됩니다.")
 @RestController
 @RequestMapping("/api/stocks")
 @RequiredArgsConstructor
@@ -67,5 +69,41 @@ public class StockApiController {
 						request.expiryDate(),
 						request.amount(),
 						request.currentTemperature()));
+	}
+
+	@Operation(
+			summary = "보류 해제",
+			description = "HOLD 상태 배치를 해제합니다. 유통기한이 지나지 않았으면 AVAILABLE, 경과했으면 EXPIRED로 전환합니다. STOCK_MOVEMENT에 RELEASE(quantity=0)를 기록합니다.")
+	@ApiResponses({
+		@ApiResponse(
+				responseCode = "200",
+				description = "해제 성공",
+				content = @Content(schema = @Schema(implementation = StockResponse.class))),
+		@ApiResponse(responseCode = "400", description = "HOLD 상태가 아님"),
+		@ApiResponse(responseCode = "404", description = "재고 미존재"),
+		@ApiResponse(responseCode = "503", description = "데이터베이스 연결 불가"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@PatchMapping("/{stockId}/release")
+	public StockResponse releaseStock(@PathVariable Long stockId) {
+		return StockResponse.from(stockService.releaseStock(stockId));
+	}
+
+	@Operation(
+			summary = "보류 배치 폐기",
+			description = "HOLD 상태 배치를 폐기합니다. DISPOSED로 전환하고 수량을 0으로 만듭니다. STOCK_MOVEMENT에 DISPOSAL(quantity=기존 수량의 음수)을 기록합니다.")
+	@ApiResponses({
+		@ApiResponse(
+				responseCode = "200",
+				description = "폐기 성공",
+				content = @Content(schema = @Schema(implementation = StockResponse.class))),
+		@ApiResponse(responseCode = "400", description = "HOLD 상태가 아님"),
+		@ApiResponse(responseCode = "404", description = "재고 미존재"),
+		@ApiResponse(responseCode = "503", description = "데이터베이스 연결 불가"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@PatchMapping("/{stockId}/dispose")
+	public StockResponse disposeStock(@PathVariable Long stockId) {
+		return StockResponse.from(stockService.disposeStock(stockId));
 	}
 }

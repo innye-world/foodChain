@@ -263,6 +263,14 @@ tbody tr:hover {
 	background: #fafcfb;
 }
 
+.stock-status--hold {
+	color: #1565c0;
+	font-weight: 600;
+	background: #e8f1ff;
+	padding: 3px 10px;
+	border-radius: 20px;
+}
+
 .row-link {
 	color: var(--accent);
 	text-decoration: none;

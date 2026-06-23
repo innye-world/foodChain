@@ -111,6 +111,54 @@
     background: var(--color-bg);
 }
 
+.btn-primary {
+    background: var(--color-primary, #0d7a5f);
+    color: #fff;
+    border-color: transparent;
+}
+
+.btn-primary:hover {
+    background: #0a634d;
+}
+
+.btn-primary:disabled,
+.btn-danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-danger {
+    background: #b42318;
+    color: #fff;
+    border-color: transparent;
+}
+
+.btn-danger:hover {
+    background: #912018;
+}
+
+.hold-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 0.5px solid var(--color-border);
+}
+
+.hold-actions-title {
+    margin: 0 0 0.35rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.hold-actions-buttons {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 0.75rem;
+}
+
+.form-error {
+    color: #b42318;
+}
+
 .detail-label {
     font-size: 11px;
     color: var(--color-text-muted);
