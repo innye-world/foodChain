@@ -11,7 +11,7 @@ public class StockStatusScheduler {
 
 	private final StockService stockService;
 
-	@Scheduled(cron = "0 0 * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void applyWarningAndExpired() {
 		stockService.updateStockStatusesByExpiry();
 	}

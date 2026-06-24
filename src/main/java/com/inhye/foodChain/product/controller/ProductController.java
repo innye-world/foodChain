@@ -22,8 +22,8 @@ public class ProductController {
 	private final ProductService productService;
 
 	@GetMapping({"/type", "/type/"})
-	public String productTypeList(Model model) {
-		model.addAttribute("productTypes", productService.findAllProductTypes());
+	public String productTypeList(@RequestParam(defaultValue = "0") int page, Model model) {
+		model.addAttribute("page", productService.findProductTypesPage(page));
 		return "product/type/product-type-list";
 	}
 
@@ -40,8 +40,8 @@ public class ProductController {
 	}
 
 	@GetMapping({"", "/"})
-	public String productList(Model model) {
-		model.addAttribute("products", productService.findAllProducts());
+	public String productList(@RequestParam(defaultValue = "0") int page, Model model) {
+		model.addAttribute("page", productService.findProductsPage(page));
 		return "product/product-list";
 	}
 

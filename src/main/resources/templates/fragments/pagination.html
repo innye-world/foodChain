@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="pagination(page, listPath)" class="pagination" th:if="${page.totalPages > 1}" aria-label="페이지 이동">
+	<div class="pagination-bar">
+		<a th:if="${page.hasPrevious()}"
+		   th:href="${listPath + '?page=' + (page.number - 1)}"
+		   class="pagination-btn pagination-btn--nav"
+		   aria-label="이전 페이지">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+				<polyline points="15 18 9 12 15 6"/>
+			</svg>
+		</a>
+		<span th:unless="${page.hasPrevious()}" class="pagination-btn pagination-btn--nav is-disabled" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="15 18 9 12 15 6"/>
+			</svg>
+		</span>
+
+		<div class="pagination-pages">
+			<a th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+			   th:href="${listPath + '?page=' + pageNum}"
+			   th:text="${pageNum + 1}"
+			   th:class="${pageNum == page.number} ? 'pagination-page is-active' : 'pagination-page'"
+			   th:aria-current="${pageNum == page.number} ? 'page' : null">1</a>
+		</div>
+
+		<a th:if="${page.hasNext()}"
+		   th:href="${listPath + '?page=' + (page.number + 1)}"
+		   class="pagination-btn pagination-btn--nav"
+		   aria-label="다음 페이지">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+				<polyline points="9 18 15 12 9 6"/>
+			</svg>
+		</a>
+		<span th:unless="${page.hasNext()}" class="pagination-btn pagination-btn--nav is-disabled" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="9 18 15 12 9 6"/>
+			</svg>
+		</span>
+	</div>
+	<p class="pagination-summary"
+	   th:text="|${page.number + 1} / ${page.totalPages} 페이지 · 총 ${page.totalElements}건|">1 / 1 페이지 · 총 0건</p>
+</nav>
+</body>
+</html>

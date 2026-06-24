@@ -11,11 +11,11 @@
 	<header class="header">
 		<h1>재고 목록</h1>
 	</header>
-	<p class="list-summary" th:if="${!#lists.isEmpty(stocks)}">
-		총 <span th:text="${#lists.size(stocks)}">0</span>건
+	<p class="list-summary" th:if="${page.totalElements > 0}">
+		총 <span th:text="${page.totalElements}">0</span>건
 	</p>
 	<section class="card">
-		<div class="table-wrap" th:if="${!#lists.isEmpty(stocks)}">
+		<div class="table-wrap" th:if="${!page.empty}">
 			<table>
 				<thead>
 				<tr>
@@ -29,7 +29,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr th:each="stock : ${stocks}"
+				<tr th:each="stock : ${page.content}"
 					th:onclick="|location.href='@{/stock/{id}(id=${stock.stockId})}'|"
 					class="table-row-link">
 					<td th:text="${stock.productId}">BAB-001</td>
@@ -47,9 +47,11 @@
 			</table>
 		</div>
 
-		<div class="empty" th:if="${#lists.isEmpty(stocks)}">
+		<div class="empty" th:if="${page.empty}">
 			<strong>등록된 재고가 없습니다.</strong>
 		</div>
+
+		<div th:replace="~{fragments/pagination :: pagination(${page}, '/stock')}"></div>
 	</section>
 	<div class="page-actions">
 		<a class="btn btn-primary" th:href="@{/stock/form}">등록</a>

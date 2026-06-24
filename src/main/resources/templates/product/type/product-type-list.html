@@ -11,11 +11,11 @@
 	<header class="header">
 		<h1>상품 유형 목록</h1>
 	</header>
-	<p class="list-summary" th:if="${!#lists.isEmpty(productTypes)}">
-		총 <span th:text="${#lists.size(productTypes)}">0</span>건
+	<p class="list-summary" th:if="${page.totalElements > 0}">
+		총 <span th:text="${page.totalElements}">0</span>건
 	</p>
 	<section class="card">
-		<div class="table-wrap" th:if="${!#lists.isEmpty(productTypes)}">
+		<div class="table-wrap" th:if="${!page.empty}">
 			<table>
 				<thead>
 				<tr>
@@ -24,7 +24,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr th:each="type : ${productTypes}">
+				<tr th:each="type : ${page.content}">
 					<td><span class="type-code" th:text="${type.typeCode}">BAB</span></td>
 					<td th:text="${type.typeName}">밥류</td>
 				</tr>
@@ -32,9 +32,11 @@
 			</table>
 		</div>
 
-		<div class="empty" th:if="${#lists.isEmpty(productTypes)}">
+		<div class="empty" th:if="${page.empty}">
 			<strong>등록된 상품 유형이 없습니다.</strong>
 		</div>
+
+		<div th:replace="~{fragments/pagination :: pagination(${page}, '/product/type')}"></div>
 	</section>
 	<div class="page-actions">
 		<a class="btn btn-primary" th:href="@{/product/type/form}">등록</a>

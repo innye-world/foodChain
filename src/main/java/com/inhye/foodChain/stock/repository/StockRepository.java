@@ -3,6 +3,8 @@ package com.inhye.foodChain.stock.repository;
 import com.inhye.foodChain.stock.domain.Stock;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +19,16 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			ORDER BY s.expiryDate ASC, s.receivedAt ASC, s.stockId ASC
 			""")
 	List<Stock> findAllOrderByFefo();
+
+	@Query(
+			value =
+					"""
+			SELECT s FROM Stock s
+			JOIN FETCH s.product
+			ORDER BY s.expiryDate ASC, s.receivedAt ASC, s.stockId ASC
+			""",
+			countQuery = "SELECT count(s) FROM Stock s")
+	Page<Stock> findAllOrderByFefo(Pageable pageable);
 
 	@Query(
 			"""

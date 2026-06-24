@@ -11,11 +11,11 @@
 	<header class="header">
 		<h1>상품 목록</h1>
 	</header>
-	<p class="list-summary" th:if="${!#lists.isEmpty(products)}">
-		총 <span th:text="${#lists.size(products)}">0</span>건
+	<p class="list-summary" th:if="${page.totalElements > 0}">
+		총 <span th:text="${page.totalElements}">0</span>건
 	</p>
 	<section class="card">
-		<div class="table-wrap" th:if="${!#lists.isEmpty(products)}">
+		<div class="table-wrap" th:if="${!page.empty}">
 			<table>
 				<thead>
 				<tr>
@@ -27,7 +27,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr th:each="product : ${products}"
+				<tr th:each="product : ${page.content}"
 					th:onclick="|location.href='@{/product/{id}(id=${product.productId})}'|"
 					class="table-row-link">
 					<td th:text="${product.productId}">BAB-001</td>
@@ -40,9 +40,11 @@
 			</table>
 		</div>
 
-		<div class="empty" th:if="${#lists.isEmpty(products)}">
+		<div class="empty" th:if="${page.empty}">
 			<strong>등록된 상품이 없습니다.</strong>
 		</div>
+
+		<div th:replace="~{fragments/pagination :: pagination(${page}, '/product')}"></div>
 	</section>
 	<div class="page-actions">
 		<a class="btn btn-primary" th:href="@{/product/form}">등록</a>

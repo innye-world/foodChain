@@ -26,18 +26,14 @@ public class StockController {
 	private final ProductService productService;
 
 	@GetMapping({"", "/"})
-	public String stockList(Model model) {
-		model.addAttribute("stocks", stockService.findAllStocksOrderByFefo());
+	public String stockList(@RequestParam(defaultValue = "0") int page, Model model) {
+		model.addAttribute("page", stockService.findStocksPage(page));
 		return "stock/stock-list";
 	}
 
 	@GetMapping("/history")
-	public String stockMovementList(Model model) {
-		model.addAttribute(
-				"movements",
-				stockService.findAllMovementsOrderByCreatedAtDesc().stream()
-						.map(StockMovementResponse::from)
-						.toList());
+	public String stockMovementList(@RequestParam(defaultValue = "0") int page, Model model) {
+		model.addAttribute("page", stockService.findMovementsPage(page).map(StockMovementResponse::from));
 		return "stock/stock-movement-list";
 	}
 

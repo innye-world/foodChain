@@ -1,6 +1,7 @@
 package com.inhye.foodChain.product.service;
 
 import com.inhye.foodChain.common.exception.ResourceNotFoundException;
+import com.inhye.foodChain.common.web.PaginationConstants;
 import com.inhye.foodChain.product.domain.Product;
 import com.inhye.foodChain.product.domain.ProductType;
 import com.inhye.foodChain.product.repository.ProductRepository;
@@ -9,6 +10,8 @@ import com.inhye.foodChain.stock.domain.StorageType;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +28,23 @@ public class ProductService {
 		return productTypeRepository.findAll(Sort.by("typeCode"));
 	}
 
+	@Transactional(readOnly = true)
+	public Page<ProductType> findProductTypesPage(int page) {
+		return productTypeRepository.findAll(
+				PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE, Sort.by("typeCode")));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> findAllProducts() {
+		return productRepository.findAllWithProductType();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Product> findProductsPage(int page) {
+		return productRepository.findAllWithProductType(
+				PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE));
+	}
+
 	@Transactional
 	public ProductType registerProductType(String typeCode, String typeName) {
 		ProductType productType = ProductType.builder()
@@ -33,11 +53,6 @@ public class ProductService {
 				.seq(0)
 				.build();
 		return productTypeRepository.save(productType);
-	}
-
-	@Transactional(readOnly = true)
-	public List<Product> findAllProducts() {
-		return productRepository.findAllWithProductType();
 	}
 
 	@Transactional(readOnly = true)

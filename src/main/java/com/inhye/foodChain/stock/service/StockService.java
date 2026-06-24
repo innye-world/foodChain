@@ -1,6 +1,7 @@
 package com.inhye.foodChain.stock.service;
 
 import com.inhye.foodChain.common.exception.ResourceNotFoundException;
+import com.inhye.foodChain.common.web.PaginationConstants;
 import com.inhye.foodChain.product.domain.Product;
 import com.inhye.foodChain.product.repository.ProductRepository;
 import com.inhye.foodChain.stock.domain.MovementType;
@@ -17,6 +18,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +37,20 @@ public class StockService {
 	}
 
 	@Transactional(readOnly = true)
+	public Page<Stock> findStocksPage(int page) {
+		return stockRepository.findAllOrderByFefo(
+				PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE));
+	}
+
+	@Transactional(readOnly = true)
 	public List<StockMovement> findAllMovementsOrderByCreatedAtDesc() {
 		return stockMovementRepository.findAllOrderByCreatedAtDesc();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<StockMovement> findMovementsPage(int page) {
+		return stockMovementRepository.findAllOrderByCreatedAtDesc(
+				PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE));
 	}
 
 	@Transactional(readOnly = true)
