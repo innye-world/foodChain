@@ -263,12 +263,34 @@ tbody tr:hover {
 	background: #fafcfb;
 }
 
-.stock-status--hold {
-	color: #1565c0;
+.stock-status {
+	display: inline-block;
+	font-size: 0.8125rem;
 	font-weight: 600;
-	background: #e8f1ff;
 	padding: 3px 10px;
 	border-radius: 20px;
+	line-height: 1.4;
+}
+
+.stock-status--available {
+	color: #2e7d32;
+	background: #e8f5e9;
+}
+
+.stock-status--warning {
+	color: #ef6c00;
+	background: #fff3e0;
+}
+
+.stock-status--hold {
+	color: #c62828;
+	background: #ffebee;
+}
+
+.stock-status--expired,
+.stock-status--disposed {
+	color: #616161;
+	background: #f0f0f0;
 }
 
 .pagination {
@@ -277,7 +299,7 @@ tbody tr:hover {
 	align-items: center;
 	gap: 0.75rem;
 	margin-top: 1.5rem;
-	padding-top: 1.25rem;
+	padding: 1.25rem 0;
 	border-top: 1px solid var(--border);
 }
 
@@ -345,13 +367,6 @@ tbody tr:hover {
 .pagination-btn.is-disabled {
 	color: #c5cdc9;
 	cursor: not-allowed;
-}
-
-.pagination-summary {
-	margin: 0;
-	font-size: 0.8125rem;
-	color: var(--muted);
-	letter-spacing: -0.01em;
 }
 
 .row-link {

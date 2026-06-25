@@ -40,7 +40,7 @@
 					<td th:text="${stock.amount}">100</td>
 					<td>
 						<span th:text="${stock.stockStatus.displayName}"
-							  th:class="${stock.stockStatus.name() == 'HOLD'} ? 'stock-status stock-status--hold' : 'stock-status'">정상</span>
+							  th:class="|stock-status stock-status--${#strings.toLowerCase(stock.stockStatus.name())}|">정상</span>
 					</td>
 				</tr>
 				</tbody>
