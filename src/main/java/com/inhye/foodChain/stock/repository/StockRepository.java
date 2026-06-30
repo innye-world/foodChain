@@ -1,6 +1,7 @@
 package com.inhye.foodChain.stock.repository;
 
 import com.inhye.foodChain.stock.domain.Stock;
+import com.inhye.foodChain.stock.domain.StockStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,32 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			""",
 			countQuery = "SELECT count(s) FROM Stock s")
 	Page<Stock> findAllOrderByFefo(Pageable pageable);
+
+	@Query(
+			value =
+					"""
+			SELECT s FROM Stock s
+			JOIN FETCH s.product p
+			JOIN p.productType pt
+			WHERE (:typeCode IS NULL OR pt.typeCode = :typeCode)
+			AND (:productId IS NULL OR p.productId = :productId)
+			AND s.stockStatus IN :statuses
+			ORDER BY s.expiryDate ASC, s.receivedAt ASC, s.stockId ASC
+			""",
+			countQuery =
+					"""
+			SELECT count(s) FROM Stock s
+			JOIN s.product p
+			JOIN p.productType pt
+			WHERE (:typeCode IS NULL OR pt.typeCode = :typeCode)
+			AND (:productId IS NULL OR p.productId = :productId)
+			AND s.stockStatus IN :statuses
+			""")
+	Page<Stock> findByFilters(
+			@Param("typeCode") String typeCode,
+			@Param("productId") String productId,
+			@Param("statuses") List<StockStatus> statuses,
+			Pageable pageable);
 
 	@Query(
 			"""

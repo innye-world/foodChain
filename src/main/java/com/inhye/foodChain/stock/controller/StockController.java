@@ -5,6 +5,8 @@ import com.inhye.foodChain.stock.dto.StockMovementResponse;
 import com.inhye.foodChain.stock.service.StockService;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -26,9 +28,39 @@ public class StockController {
 	private final ProductService productService;
 
 	@GetMapping({"", "/"})
-	public String stockList(@RequestParam(defaultValue = "0") int page, Model model) {
-		model.addAttribute("page", stockService.findStocksPage(page));
+	public String stockList(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) String typeCode,
+			@RequestParam(required = false) String productId,
+			@RequestParam(required = false) String status,
+			Model model) {
+		model.addAttribute("page", stockService.findStocksPage(page, typeCode, productId, status));
+		model.addAttribute("productTypes", productService.findAllProductTypes());
+		model.addAttribute("selectedTypeCode", typeCode != null ? typeCode : "");
+		model.addAttribute("selectedProductId", productId != null ? productId : "");
+		model.addAttribute("selectedStatus", status != null ? status : "");
+		model.addAttribute("filterQuery", buildFilterQuery(typeCode, productId, status));
 		return "stock/stock-list";
+	}
+
+	private static String buildFilterQuery(String typeCode, String productId, String status) {
+		StringBuilder query = new StringBuilder();
+		appendQueryParam(query, "typeCode", typeCode);
+		appendQueryParam(query, "productId", productId);
+		appendQueryParam(query, "status", status);
+		return query.toString();
+	}
+
+	private static void appendQueryParam(StringBuilder query, String name, String value) {
+		if (value == null || value.isBlank()) {
+			return;
+		}
+		if (!query.isEmpty()) {
+			query.append('&');
+		}
+		query.append(name)
+				.append('=')
+				.append(URLEncoder.encode(value.trim(), StandardCharsets.UTF_8));
 	}
 
 	@GetMapping("/history")

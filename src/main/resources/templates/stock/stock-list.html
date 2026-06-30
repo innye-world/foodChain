@@ -4,6 +4,7 @@
 <head>
 	<th:block th:fragment="head-extra">
 		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+		<script th:src="@{/js/stock-list.js}" defer></script>
 	</th:block>
 </head>
 <body>
@@ -11,6 +12,47 @@
 	<header class="header">
 		<h1>재고 목록</h1>
 	</header>
+
+	<section class="card filter-card">
+		<form id="stock-filter-form" class="list-filter" method="get" th:action="@{/stock}">
+			<div class="list-filter__field">
+				<label for="filterTypeCode">제품 유형</label>
+				<select id="filterTypeCode" name="typeCode"
+						th:data-selected="${selectedTypeCode}">
+					<option value="">전체</option>
+					<option th:each="type : ${productTypes}"
+							th:value="${type.typeCode}"
+							th:text="${type.typeName + ' (' + type.typeCode + ')'}"
+							th:selected="${type.typeCode == selectedTypeCode}">밥류 (BAB)</option>
+				</select>
+			</div>
+
+			<div class="list-filter__field">
+				<label for="filterProductId">제품</label>
+				<select id="filterProductId" name="productId" disabled
+						th:data-selected="${selectedProductId}">
+					<option value="" disabled selected>먼저 유형을 선택하세요</option>
+				</select>
+			</div>
+
+			<div class="list-filter__field">
+				<label for="filterStatus">상태</label>
+				<select id="filterStatus" name="status">
+					<option value="" th:selected="${selectedStatus == ''}">전체 (정상·임박·보류)</option>
+					<option th:each="st : ${T(com.inhye.foodChain.stock.domain.StockStatus).values()}"
+							th:value="${st.name()}"
+							th:text="${st.displayName}"
+							th:selected="${st.name() == selectedStatus}">정상</option>
+				</select>
+			</div>
+
+			<div class="list-filter__actions">
+				<button type="submit" class="btn btn-primary">검색</button>
+				<a class="btn btn-secondary" th:href="@{/stock}">초기화</a>
+			</div>
+		</form>
+	</section>
+
 	<p class="list-summary" th:if="${page.totalElements > 0}">
 		총 <span th:text="${page.totalElements}">0</span>건
 	</p>
@@ -35,7 +77,10 @@
 					<td th:text="${stock.productId}">BAB-001</td>
 					<td th:text="${stock.productName}">삼각김밥</td>
 					<td th:text="${stock.lotNo}">LOT-2605220001</td>
-					<td th:text="${stock.expiryDate}">2026-05-22</td>
+					<td>
+						<span th:text="${stock.expiryDate}"
+							  th:classappend="${stock.expiryDate == #temporals.createToday()} ? ' expiry-date--today' : ''">2026-05-22</span>
+					</td>
 					<td th:text="${#temporals.format(stock.receivedAt, 'yyyy-MM-dd HH:mm')}">2026-05-21 10:00</td>
 					<td th:text="${stock.amount}">100</td>
 					<td>
@@ -48,10 +93,10 @@
 		</div>
 
 		<div class="empty" th:if="${page.empty}">
-			<strong>등록된 재고가 없습니다.</strong>
+			<strong>조건에 맞는 재고가 없습니다.</strong>
 		</div>
 
-		<div th:replace="~{fragments/pagination :: pagination(${page}, '/stock')}"></div>
+		<div th:replace="~{fragments/pagination :: pagination(${page}, '/stock', ${filterQuery})}"></div>
 	</section>
 	<div class="page-actions">
 		<a class="btn btn-primary" th:href="@{/stock/form}">등록</a>

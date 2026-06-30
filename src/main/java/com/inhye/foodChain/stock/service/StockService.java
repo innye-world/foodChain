@@ -38,8 +38,27 @@ public class StockService {
 
 	@Transactional(readOnly = true)
 	public Page<Stock> findStocksPage(int page) {
-		return stockRepository.findAllOrderByFefo(
+		return findStocksPage(page, null, null, null);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Stock> findStocksPage(int page, String typeCode, String productId, String status) {
+		return stockRepository.findByFilters(
+				blankToNull(typeCode),
+				blankToNull(productId),
+				resolveStatuses(status),
 				PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE));
+	}
+
+	private static List<StockStatus> resolveStatuses(String status) {
+		if (status == null || status.isBlank()) {
+			return List.of(StockStatus.AVAILABLE, StockStatus.WARNING, StockStatus.HOLD);
+		}
+		return List.of(StockStatus.valueOf(status.trim()));
+	}
+
+	private static String blankToNull(String value) {
+		return value == null || value.isBlank() ? null : value.trim();
 	}
 
 	@Transactional(readOnly = true)

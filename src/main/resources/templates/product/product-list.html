@@ -44,7 +44,7 @@
 			<strong>등록된 상품이 없습니다.</strong>
 		</div>
 
-		<div th:replace="~{fragments/pagination :: pagination(${page}, '/product')}"></div>
+		<div th:replace="~{fragments/pagination :: pagination(${page}, '/product', '')}"></div>
 	</section>
 	<div class="page-actions">
 		<a class="btn btn-primary" th:href="@{/product/form}">등록</a>
