@@ -77,4 +77,19 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			)
 			""")
 	List<Stock> findActiveStocksForExpiryUpdate();
+
+	/** 제품에 해당하는 재고 리스트 조회 */
+	@Query(
+			"""
+			SELECT s FROM Stock s
+			JOIN FETCH s.product p
+			WHERE s.stockStatus IN (
+				com.inhye.foodChain.stock.domain.StockStatus.AVAILABLE,
+				com.inhye.foodChain.stock.domain.StockStatus.WARNING
+			)
+			AND p.productId = :productId
+			ORDER BY CASE WHEN s.stockStatus = WARNING THEN 0 ELSE 1 END,
+			s.expiryDate ASC, s.receivedAt ASC, s.stockId ASC
+			""")
+	List<Stock> findByproductId(@Param("productId") String productId);
 }

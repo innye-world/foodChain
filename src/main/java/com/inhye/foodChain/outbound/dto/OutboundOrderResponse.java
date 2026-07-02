@@ -9,4 +9,5 @@ public record OutboundOrderResponse(
 		@Schema(description = "상품 ID", example = "BAB-001") String productId,
 		@Schema(description = "요청 수량", example = "350") int requestAmount,
 		@Schema(description = "실제 출고 수량", example = "350") int fulfilledAmount,
-		@Schema(description = "LOT별 출고 배정 목록") List<LotAllocationResponse> lotAllocations) {}
+		@Schema(description = "LOT별 출고 배정 목록") List<LotAllocationResponse> lotAllocations,
+		@Schema(description = "메시지") String message) {}
