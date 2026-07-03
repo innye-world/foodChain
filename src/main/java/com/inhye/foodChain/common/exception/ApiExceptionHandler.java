@@ -1,6 +1,7 @@
 package com.inhye.foodChain.common.exception;
 
 import com.inhye.foodChain.common.dto.ApiErrorResponse;
+import com.inhye.foodChain.outbound.controller.OutboundApiController;
 import com.inhye.foodChain.product.controller.ProductApiController;
 import com.inhye.foodChain.stock.controller.StockApiController;
 import com.inhye.foodChain.stock.controller.StockMovementApiController;
@@ -23,7 +24,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @Slf4j
 @RestControllerAdvice(
-		assignableTypes = {StockApiController.class, StockMovementApiController.class, ProductApiController.class})
+		assignableTypes = {
+			StockApiController.class,
+			StockMovementApiController.class,
+			ProductApiController.class,
+			OutboundApiController.class
+		})
 public class ApiExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
