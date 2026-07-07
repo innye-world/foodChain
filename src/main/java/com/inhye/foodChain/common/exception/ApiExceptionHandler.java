@@ -6,10 +6,8 @@ import com.inhye.foodChain.product.controller.ProductApiController;
 import com.inhye.foodChain.stock.controller.StockApiController;
 import com.inhye.foodChain.stock.controller.StockMovementApiController;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,16 +30,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 		})
 public class ApiExceptionHandler {
 
+	/*
+		상품 재고 없음
+	 */
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<ApiErrorResponse> handleNotFound(
 			ResourceNotFoundException ex, HttpServletRequest request) {
 		return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
-	}
-
-	@ExceptionHandler(NoSuchElementException.class)
-	public ResponseEntity<ApiErrorResponse> handleNoSuchElement(
-			NoSuchElementException ex, HttpServletRequest request) {
-		return build(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다.", request);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
@@ -50,18 +45,18 @@ public class ApiExceptionHandler {
 		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
 	}
 
+	/*
+		재고 부족 (Hold 제외)
+	 */
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ApiErrorResponse> handleIllegalState(
 			IllegalStateException ex, HttpServletRequest request) {
 		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
 	}
 
-	@ExceptionHandler(ConflictException.class)
-	public ResponseEntity<ApiErrorResponse> handleConflict(
-			ConflictException ex, HttpServletRequest request) {
-		return build(HttpStatus.CONFLICT, ex.getMessage(), request);
-	}
-
+	/*
+		중복 LOT
+	 */
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ApiErrorResponse> handleDataIntegrity(
 			DataIntegrityViolationException ex, HttpServletRequest request) {
@@ -83,15 +78,11 @@ public class ApiExceptionHandler {
 		return build(HttpStatus.BAD_REQUEST, message, request, details);
 	}
 
-	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<ApiErrorResponse> handleConstraintViolation(
-			ConstraintViolationException ex, HttpServletRequest request) {
-		Map<String, String> details = new LinkedHashMap<>();
-		ex.getConstraintViolations()
-				.forEach(v -> details.put(v.getPropertyPath().toString(), v.getMessage()));
-		return build(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다.", request, details);
-	}
-
+	/*
+		필수 쿼리 파라미터 누락
+		json 파싱 실패, body 없음
+		타입 불일치
+	 */
 	@ExceptionHandler({
 		MissingServletRequestParameterException.class,
 		HttpMessageNotReadableException.class,

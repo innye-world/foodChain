@@ -40,7 +40,13 @@ public class OutboundService {
     @Transactional
     public OutboundOrderResponse processOutboundOrder(OutboundOrderRequest request) {
         String productId = request.productId();
+        String orderId = request.orderId();
         int requestedAmount = request.requestAmount();
+
+		// 이미 처리한 주문id 일 때
+        if (outboundOrderRepository.existsByOrderId(orderId)) {
+            throw new IllegalStateException("이미 처리된 주문입니다: " + orderId);
+        }
 
         List<Stock> lotsList = stockRepository.findByproductId(productId);
         int totalStockAmount = 0;
@@ -55,9 +61,10 @@ public class OutboundService {
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다: " + productId));
+
         OutboundOrder outboundOrder = outboundOrderRepository.save(
                 OutboundOrder.builder()
-                        .orderId(request.orderId())
+                        .orderId(orderId)
                         .product(product)
                         .requestAmount(request.requestAmount())
                         .requestedBy(request.requestedBy())

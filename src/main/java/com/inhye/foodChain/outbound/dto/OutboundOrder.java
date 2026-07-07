@@ -35,7 +35,7 @@ public class OutboundOrder {
 	@Column(name = "outbound_id")
 	private Long outboundId;
 
-	@Column(name = "order_id", nullable = false)
+	@Column(name = "order_id", nullable = false, unique = true)
 	private String orderId;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
