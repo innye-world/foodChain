@@ -11,18 +11,19 @@
 	<div class="metrics">
 		<div class="metric-card">
 			<div class="metric-label">전체 상품</div>
-			<div class="metric-value" th:text="${totalProducts} ?: '128'">128</div>
-			<div class="metric-sub metric-up">↑ 4 이번 주</div>
+			<div class="metric-value" th:text="${#numbers.formatInteger(allProductCount, 0, 'COMMA')}">0</div>
+			<div class="metric-sub metric-up" th:text="|↑ ${productsAddedThisWeek} 이번 주|">↑ 0 이번 주</div>
 		</div>
 		<div class="metric-card">
 			<div class="metric-label">상품 유형</div>
-			<div class="metric-value" th:text="${totalProductTypes} ?: '6'">6</div>
-			<div class="metric-sub" style="color: var(--color-text-hint)">BAB, SNACK 외 4</div>
+			<div class="metric-value" th:text="${#numbers.formatInteger(allProductTypeCount, 0, 'COMMA')}">0</div>
+			<div class="metric-sub" style="color: var(--color-text-hint)"
+				 th:text="${#strings.isEmpty(typeString) ? '-' : typeString}">-</div>
 		</div>
 		<div class="metric-card">
 			<div class="metric-label">총 재고</div>
-			<div class="metric-value" th:text="${totalStock} ?: '1,042'">1,042</div>
-			<div class="metric-sub metric-up">↑ 정상 범위</div>
+			<div class="metric-value" th:text="${#numbers.formatInteger(allStockCount, 0, 'COMMA')}">0</div>
+			<div class="metric-sub metric-up" th:text="|↑ ${stockCountOfToday} 오늘 입고|">↑ 0 오늘 입고</div>
 		</div>
 		<!-- 재고 부족 카드: 수치 연동 후 활성화
 		<div class="metric-card">

@@ -1,6 +1,8 @@
 package com.inhye.foodChain.product.repository;
 
 import com.inhye.foodChain.product.domain.Product;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -29,4 +31,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 			ORDER BY p.productId
 			""")
 	List<Product> findByTypeCode(@Param("typeCode") String typeCode);
+
+	@Query(
+			"""
+			SELECT count(p) FROM Product p
+			WHERE p.createdAt >= :weekStart
+			AND p.createdAt < :weekEnd
+			""")
+    int countNewProductsInThisWeek(LocalDateTime weekStart, LocalDateTime weekEnd);
 }

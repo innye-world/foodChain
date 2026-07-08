@@ -8,6 +8,10 @@ import com.inhye.foodChain.product.repository.ProductRepository;
 import com.inhye.foodChain.product.repository.ProductTypeRepository;
 import com.inhye.foodChain.stock.domain.StorageType;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -97,5 +101,13 @@ public class ProductService {
 				.build();
 
 		return productRepository.save(product);
+	}
+
+	public int countProductsAddedThisWeek() {
+		LocalDateTime weekStart = LocalDate.now()
+				.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+				.atStartOfDay();
+		LocalDateTime weekEnd = weekStart.plusWeeks(1);
+		return productRepository.countNewProductsInThisWeek(weekStart, weekEnd);
 	}
 }

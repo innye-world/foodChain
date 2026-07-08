@@ -21,7 +21,7 @@
 		</button>
 		<span class="page-title" th:text="${pageTitle}">페이지</span>
 		<div class="topbar-right">
-			<span class="badge">오늘 입고 3건</span>
+			<span class="badge" th:text="|오늘 입고 ${stockCountOfToday}건|">오늘 입고 0건</span>
 		</div>
 	</header>
 	<div class="content" th:insert="${main}"></div>

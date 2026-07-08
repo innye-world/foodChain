@@ -2,6 +2,7 @@ package com.inhye.foodChain.stock.repository;
 
 import com.inhye.foodChain.stock.domain.Stock;
 import com.inhye.foodChain.stock.domain.StockStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -92,4 +93,25 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			s.expiryDate ASC, s.receivedAt ASC, s.stockId ASC
 			""")
 	List<Stock> findByproductId(@Param("productId") String productId);
+
+	/** 대시보드에 들어갈 총 재고 수량 */
+	@Query(
+			"""
+			SELECT s FROM Stock s
+			WHERE s.stockStatus IN (
+				com.inhye.foodChain.stock.domain.StockStatus.AVAILABLE,
+				com.inhye.foodChain.stock.domain.StockStatus.WARNING
+			)
+			""")
+	List<Stock> findAllAvailableAndWarningStocks();
+
+	/** 대시보드에 들어갈 오늘 입고 배치 */
+	@Query(
+			"""
+			SELECT s FROM Stock s
+			WHERE s.receivedAt >= :dayStart
+			AND s.receivedAt < :dayEnd
+			""")
+	List<Stock> findBatchCountOfToday(
+			@Param("dayStart") LocalDateTime dayStart, @Param("dayEnd") LocalDateTime dayEnd);
 }

@@ -242,4 +242,19 @@ public class StockService {
 		}
 		return stock;
 	}
+
+	public List<Stock> findAllAvailableAndWarningStocks(){
+		return stockRepository.findAllAvailableAndWarningStocks();
+	}
+
+	public int findStockCountOfToday(){
+		LocalDateTime dayStart = LocalDate.now().atStartOfDay();
+		LocalDateTime dayEnd = dayStart.plusDays(1);
+		int stockCount = 0;
+		List<Stock> batchList = stockRepository.findBatchCountOfToday(dayStart, dayEnd);
+		for(Stock batch : batchList){
+			stockCount += batch.getAmount();
+		}
+		return stockCount;
+	}
 }
