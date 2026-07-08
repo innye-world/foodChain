@@ -467,3 +467,71 @@ tbody tr:hover {
 	margin: 0;
 	font-size: 0.9375rem;
 }
+
+@media (max-width: 768px) {
+	.page {
+		max-width: none;
+	}
+
+	.header {
+		margin-bottom: 1.25rem;
+	}
+
+	h1 {
+		font-size: 1.375rem;
+	}
+
+	th,
+	td {
+		padding: 0.75rem 0.875rem;
+		font-size: 0.875rem;
+	}
+
+	th {
+		font-size: 0.6875rem;
+	}
+
+	.filter-card {
+		padding: 1rem;
+	}
+
+	.form-card {
+		padding: 1rem;
+	}
+
+	.form-actions {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+
+	.form-actions .btn {
+		width: 100%;
+	}
+
+	.page-actions {
+		justify-content: stretch;
+	}
+
+	.page-actions .btn {
+		flex: 1;
+	}
+
+	.detail-item {
+		grid-template-columns: 1fr;
+		gap: 0.25rem;
+	}
+
+	.pagination {
+		padding: 1rem 0;
+	}
+
+	.empty {
+		padding: 2rem 1rem;
+	}
+
+	.empty code {
+		font-size: 0.6875rem;
+		overflow-x: auto;
+		max-width: 100%;
+	}
+}

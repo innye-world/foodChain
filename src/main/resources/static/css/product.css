@@ -159,6 +159,42 @@
     color: #b42318;
 }
 
+@media (max-width: 768px) {
+    .card,
+    .form-card {
+        padding: 1rem;
+        max-width: none;
+    }
+
+    .detail-row--2col {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .detail-meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .hold-actions-buttons {
+        flex-direction: column;
+    }
+
+    .hold-actions-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 .detail-label {
     font-size: 11px;
     color: var(--color-text-muted);

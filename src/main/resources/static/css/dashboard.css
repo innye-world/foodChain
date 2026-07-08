@@ -1,6 +1,6 @@
 .metrics {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	gap: 12px;
 }
 
@@ -95,4 +95,24 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+}
+
+@media (max-width: 900px) {
+	.metrics {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.charts-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 480px) {
+	.metrics {
+		grid-template-columns: 1fr;
+	}
+
+	.metric-value {
+		font-size: 20px;
+	}
 }

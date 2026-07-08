@@ -24,11 +24,13 @@
 			<div class="metric-value" th:text="${totalStock} ?: '1,042'">1,042</div>
 			<div class="metric-sub metric-up">↑ 정상 범위</div>
 		</div>
+		<!-- 재고 부족 카드: 수치 연동 후 활성화
 		<div class="metric-card">
 			<div class="metric-label">재고 부족</div>
 			<div class="metric-value metric-danger" th:text="${lowStockCount} ?: '3'">3</div>
 			<div class="metric-sub metric-danger">확인 필요</div>
 		</div>
+		-->
 	</div>
 
 	<div class="charts-row">
