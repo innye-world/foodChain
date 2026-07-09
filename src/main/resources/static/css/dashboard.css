@@ -139,9 +139,28 @@
 		grid-template-columns: repeat(2, 1fr);
 	}
 
+	.content:has(.dashboard-content) {
+		overflow-y: auto;
+	}
+
+	.dashboard-content {
+		height: auto;
+		min-height: 100%;
+	}
+
 	.charts-row {
+		flex: none;
 		grid-template-columns: 1fr;
-		grid-template-rows: 1fr 1fr;
+		grid-template-rows: auto auto;
+	}
+
+	.chart-card {
+		height: auto;
+		min-height: 300px;
+	}
+
+	.chart-canvas-wrap {
+		min-height: 220px;
 	}
 }
 
@@ -152,5 +171,13 @@
 
 	.metric-value {
 		font-size: 20px;
+	}
+
+	.chart-card {
+		min-height: 340px;
+	}
+
+	.chart-canvas-wrap {
+		min-height: 260px;
 	}
 }
