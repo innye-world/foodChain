@@ -37,9 +37,13 @@
 }
 
 .charts-row {
+	flex: 1;
+	min-height: 0;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr;
 	gap: 16px;
+	align-items: stretch;
 }
 
 .chart-card {
@@ -49,14 +53,16 @@
 	padding: 18px;
 	display: flex;
 	flex-direction: column;
-	min-height: 240px;
+	min-height: 0;
+	height: 100%;
 }
 
 .chart-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 14px;
+	margin-bottom: 10px;
+	flex-shrink: 0;
 }
 
 .chart-title {
@@ -67,6 +73,24 @@
 .chart-tag {
 	font-size: 11px;
 	color: var(--color-text-hint);
+}
+
+.chart-canvas-wrap {
+	flex: 1;
+	min-height: 0;
+	position: relative;
+}
+
+.chart-canvas-wrap canvas {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+#holdNotice {
+	font-size: 11px;
+	color: var(--color-text-hint);
+	margin-top: 8px;
+	flex-shrink: 0;
 }
 
 .chart-area {
@@ -95,6 +119,19 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+}
+
+.content:has(.dashboard-content) {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.metrics {
+	flex-shrink: 0;
 }
 
 @media (max-width: 900px) {
@@ -104,6 +141,7 @@
 
 	.charts-row {
 		grid-template-columns: 1fr;
+		grid-template-rows: 1fr 1fr;
 	}
 }
 

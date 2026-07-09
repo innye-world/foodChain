@@ -2,6 +2,8 @@ package com.inhye.foodChain.stock.service;
 
 import com.inhye.foodChain.common.exception.ResourceNotFoundException;
 import com.inhye.foodChain.common.web.PaginationConstants;
+import com.inhye.foodChain.dashboard.dto.InoutChartResponse;
+import com.inhye.foodChain.dashboard.dto.StockRatioByProductResponse;
 import com.inhye.foodChain.product.domain.Product;
 import com.inhye.foodChain.product.repository.ProductRepository;
 import com.inhye.foodChain.stock.domain.MovementType;
@@ -15,8 +17,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +37,16 @@ public class StockService {
 	private final StockRepository stockRepository;
 	private final StockMovementRepository stockMovementRepository;
 	private final ProductRepository productRepository;
+
+	// 대시보드 차트
+	private static final DateTimeFormatter CHART_LABEL_FORMAT = DateTimeFormatter.ofPattern("MM-dd");
+	private static final List<MovementType> CHART_MOVEMENT_TYPES = List.of(MovementType.INBOUND, MovementType.OUTBOUND, MovementType.DISPOSAL);
+	private static final Map<MovementType, String> CHART_COLORS = Map.of(
+			MovementType.INBOUND, "#22c55e",
+			MovementType.OUTBOUND, "#3b82f6",
+			MovementType.DISPOSAL, "#ef4444");
+	private static final List<String> TYPE_CHART_PALETTE = List.of(
+			"#3b82f6", "#22c55e", "#f59e0b", "#9ca3af", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316");
 
 	@Transactional(readOnly = true)
 	public List<Stock> findAllStocksOrderByFefo() {
@@ -256,5 +273,51 @@ public class StockService {
 			stockCount += batch.getAmount();
 		}
 		return stockCount;
+	}
+
+	@Transactional(readOnly = true)
+	public InoutChartResponse getInoutChartData() {
+		LocalDate startDate = LocalDate.now().minusDays(6);
+		List<String> labels = startDate.datesUntil(startDate.plusDays(7))
+				.map(date -> date.format(CHART_LABEL_FORMAT))
+				.toList();
+
+		int[][] totalsByType = new int[CHART_MOVEMENT_TYPES.size()][7];
+		for (StockMovement movement : stockMovementRepository.findMovementsSince(
+				startDate.atStartOfDay(), CHART_MOVEMENT_TYPES)) {
+			int typeIdx = CHART_MOVEMENT_TYPES.indexOf(movement.getMovementType());
+			int dayIdx = (int) ChronoUnit.DAYS.between(startDate, movement.getCreatedAt().toLocalDate());
+			if (typeIdx < 0 || dayIdx < 0 || dayIdx >= 7) {
+				continue;
+			}
+			totalsByType[typeIdx][dayIdx] += Math.abs(movement.getQuantity());
+		}
+
+		List<InoutChartResponse.Dataset> datasets = IntStream.range(0, CHART_MOVEMENT_TYPES.size())
+				.mapToObj(i -> {
+					MovementType type = CHART_MOVEMENT_TYPES.get(i);
+					return new InoutChartResponse.Dataset(
+							type.getDisplayName(),
+							Arrays.stream(totalsByType[i]).boxed().toList(),
+							CHART_COLORS.get(type));
+				})
+				.toList();
+
+		return new InoutChartResponse(labels, datasets);
+	}
+
+	@Transactional(readOnly = true)
+	public StockRatioByProductResponse getStockRatioByProductTypeData() {
+		List<Object[]> rows = stockRepository.sumAmountGroupByProductType();
+
+		List<String> labels = rows.stream().map(row -> (String) row[0]).toList();
+		List<Integer> data = rows.stream().map(row -> ((Number) row[1]).intValue()).toList();
+		List<String> colors = IntStream.range(0, labels.size())
+				.mapToObj(i -> TYPE_CHART_PALETTE.get(i % TYPE_CHART_PALETTE.size()))
+				.toList();
+
+		return new StockRatioByProductResponse(
+				labels,
+				List.of(new StockRatioByProductResponse.Dataset(data, colors)));
 	}
 }

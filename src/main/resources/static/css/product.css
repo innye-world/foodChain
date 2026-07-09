@@ -4,10 +4,15 @@
     border: 0.5px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
+    width: 100%;
+}
+
+.page {
+    width: 100%;
 }
 
 .form-card {
-    max-width: 760px;
+    width: 100%;
 }
 
 /* detail-list 기본 */
@@ -163,7 +168,6 @@
     .card,
     .form-card {
         padding: 1rem;
-        max-width: none;
     }
 
     .detail-row--2col {

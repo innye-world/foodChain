@@ -40,29 +40,23 @@
 				<span class="chart-title">입/출고 현황</span>
 				<span class="chart-tag">최근 7일</span>
 			</div>
-			<div class="chart-area">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-					<rect x="3" y="12" width="4" height="8"/>
-					<rect x="10" y="8" width="4" height="12"/>
-					<rect x="17" y="4" width="4" height="16"/>
-				</svg>
-				<span>그래프 영역</span>
+			<div class="chart-canvas-wrap">
+				<canvas id="inoutChart"></canvas>
 			</div>
 		</div>
 		<div class="chart-card">
 			<div class="chart-header">
-				<span class="chart-title">유형별 재고 비율</span>
+				<span class="chart-title">상품 유형별 재고 비율</span>
 				<span class="chart-tag">현재</span>
 			</div>
-			<div class="chart-area">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-					<circle cx="12" cy="12" r="10"/>
-					<path d="M12 2a10 10 0 0 1 10 10"/>
-				</svg>
-				<span>그래프 영역</span>
+			<div class="chart-canvas-wrap">
+				<canvas id="typeChart"></canvas>
 			</div>
 		</div>
 	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+	<script th:src="@{/js/chart.js}"></script>
 </div>
 </body>
 </html>

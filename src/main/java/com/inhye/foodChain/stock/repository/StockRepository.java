@@ -114,4 +114,20 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			""")
 	List<Stock> findBatchCountOfToday(
 			@Param("dayStart") LocalDateTime dayStart, @Param("dayEnd") LocalDateTime dayEnd);
+
+	/** 대시보드: 유형별 현재 재고 수량 합계 */
+	@Query(
+			"""
+			SELECT pt.typeName, SUM(s.amount)
+			FROM Stock s
+			JOIN s.product p
+			JOIN p.productType pt
+			WHERE s.stockStatus IN (
+				com.inhye.foodChain.stock.domain.StockStatus.AVAILABLE,
+				com.inhye.foodChain.stock.domain.StockStatus.WARNING
+			)
+			GROUP BY pt.productTypeId, pt.typeName
+			ORDER BY pt.typeName
+			""")
+	List<Object[]> sumAmountGroupByProductType();
 }
