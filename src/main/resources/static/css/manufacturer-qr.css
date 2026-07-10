@@ -1,0 +1,120 @@
+.manufacturer-qr-page .subtitle {
+	max-width: 40rem;
+}
+
+.manufacturer-qr-card {
+	padding: 1.5rem;
+}
+
+.manufacturer-qr-layout {
+	display: grid;
+	grid-template-columns: minmax(220px, 280px) 1fr;
+	gap: 1.5rem;
+	align-items: start;
+}
+
+.manufacturer-qr-panel__title {
+	margin: 0 0 1rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+}
+
+.manufacturer-qr-canvas {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 240px;
+	padding: 1rem;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	background: #fff;
+}
+
+.manufacturer-qr-canvas img,
+.manufacturer-qr-canvas canvas {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.manufacturer-qr-hint {
+	margin: 0.75rem 0 0;
+	font-size: 0.8125rem;
+	color: var(--muted);
+	text-align: center;
+}
+
+.manufacturer-qr-detail .detail-item {
+	grid-template-columns: 6.5rem 1fr;
+}
+
+.manufacturer-qr-url-box {
+	margin-top: 1.25rem;
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--border);
+}
+
+.manufacturer-qr-url-label {
+	display: block;
+	margin-bottom: 0.375rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--muted);
+}
+
+.manufacturer-qr-url-row {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.manufacturer-qr-url-input {
+	flex: 1;
+	min-width: 0;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	font-size: 0.8125rem;
+	font-family: "SF Mono", "Menlo", monospace;
+	background: #fafcfb;
+}
+
+.manufacturer-qr-actions {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 1.25rem;
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+	.manufacturer-qr-card {
+		padding: 1rem;
+	}
+
+	.manufacturer-qr-layout {
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+
+	.manufacturer-qr-canvas {
+		min-height: 220px;
+	}
+
+	.manufacturer-qr-url-row {
+		flex-direction: column;
+	}
+
+	.manufacturer-qr-url-row .btn {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.manufacturer-qr-actions {
+		justify-content: stretch;
+	}
+
+	.manufacturer-qr-actions .btn {
+		flex: 1;
+		justify-content: center;
+	}
+}

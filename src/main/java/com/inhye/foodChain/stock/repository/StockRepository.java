@@ -58,6 +58,33 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			@Param("statuses") List<StockStatus> statuses,
 			Pageable pageable);
 
+	/** 최근 등록순: 입고일시 → 재고 ID 내림차순 */
+	@Query(
+			value =
+					"""
+			SELECT s FROM Stock s
+			JOIN FETCH s.product p
+			JOIN p.productType pt
+			WHERE (:typeCode IS NULL OR pt.typeCode = :typeCode)
+			AND (:productId IS NULL OR p.productId = :productId)
+			AND s.stockStatus IN :statuses
+			ORDER BY s.receivedAt DESC, s.stockId DESC
+			""",
+			countQuery =
+					"""
+			SELECT count(s) FROM Stock s
+			JOIN s.product p
+			JOIN p.productType pt
+			WHERE (:typeCode IS NULL OR pt.typeCode = :typeCode)
+			AND (:productId IS NULL OR p.productId = :productId)
+			AND s.stockStatus IN :statuses
+			""")
+	Page<Stock> findByFiltersOrderByReceivedDesc(
+			@Param("typeCode") String typeCode,
+			@Param("productId") String productId,
+			@Param("statuses") List<StockStatus> statuses,
+			Pageable pageable);
+
 	@Query(
 			"""
 			SELECT s FROM Stock s
@@ -130,4 +157,15 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			ORDER BY pt.typeName
 			""")
 	List<Object[]> sumAmountGroupByProductType();
+
+	/** 입고 LOT 자동 생성: 상품·일자별 기존 LOT 개수 */
+	@Query(
+			"""
+			SELECT COUNT(s) FROM Stock s
+			JOIN s.product p
+			WHERE p.productId = :productId
+			AND s.lotNo LIKE :lotPrefixPattern
+			""")
+	long countByProductIdAndLotNoStartingWith(
+			@Param("productId") String productId, @Param("lotPrefixPattern") String lotPrefixPattern);
 }

@@ -15,6 +15,7 @@
 
 	<section class="card filter-card">
 		<form id="stock-filter-form" class="list-filter" method="get" th:action="@{/stock}">
+			<input type="hidden" name="sort" value="received" th:if="${sort == 'received'}"/>
 			<div class="list-filter__field">
 				<label for="filterTypeCode">제품 유형</label>
 				<select id="filterTypeCode" name="typeCode"
@@ -55,6 +56,7 @@
 
 	<p class="list-summary" th:if="${page.totalElements > 0}">
 		총 <span th:text="${page.totalElements}">0</span>건
+		<span th:if="${sort == 'received'}">· 최근 등록순</span>
 	</p>
 	<section class="card">
 		<div class="table-wrap" th:if="${!page.empty}">

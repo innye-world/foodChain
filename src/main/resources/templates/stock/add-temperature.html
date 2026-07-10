@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<title>입고 온도 입력 · FoodChain</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"/>
+	<link rel="stylesheet" th:href="@{/css/add-temperature.css}"/>
+	<script th:src="@{/js/add-temperature.js}" defer></script>
+</head>
+<body class="inbound-page">
+<header class="inbound-header">
+	<div class="inbound-header__brand">
+		<span class="inbound-header__dot"></span>
+		<span class="inbound-header__title">FoodChain 입고</span>
+	</div>
+	<p class="inbound-header__subtitle">QR 스캔 후 입고 구역 온도를 입력하세요.</p>
+</header>
+
+<main class="inbound-main">
+	<section class="inbound-card inbound-summary">
+		<p class="inbound-summary__label">상품명</p>
+		<h1 class="inbound-summary__name" th:text="${product.productName}">삼각김밥</h1>
+		<dl class="inbound-summary-list">
+			<div class="inbound-summary-item">
+				<dt>상품 ID</dt>
+				<dd th:text="${productId}">BAB-001</dd>
+			</div>
+			<div class="inbound-summary-item">
+				<dt>유형</dt>
+				<dd th:text="${product.productType.typeName}">밥류</dd>
+			</div>
+			<div class="inbound-summary-item">
+				<dt>제조일자</dt>
+				<dd th:text="${mfgDate}">2026-07-01</dd>
+			</div>
+			<div class="inbound-summary-item">
+				<dt>유통기한</dt>
+				<dd th:text="${expiryDate}">2026-08-01</dd>
+			</div>
+			<div class="inbound-summary-item">
+				<dt>수량</dt>
+				<dd th:text="${amount}">100</dd>
+			</div>
+			<div class="inbound-summary-item">
+				<dt>LOT 번호</dt>
+				<dd th:text="${lotNo}">LOT-20260710-001</dd>
+			</div>
+			<div class="inbound-summary-item inbound-summary-item--full">
+				<dt>적정 온도(℃)</dt>
+				<dd th:text="${product.minTemperature + ' ~ ' + product.maxTemperature}">0.0 ~ 10.0</dd>
+			</div>
+		</dl>
+	</section>
+
+	<section class="inbound-card inbound-form-card">
+		<form id="inbound-temperature-form" class="inbound-form">
+			<input type="hidden" id="productId" th:value="${productId}"/>
+			<input type="hidden" id="lotNo" th:value="${lotNo}"/>
+			<input type="hidden" id="mfgDate" th:value="${mfgDate}"/>
+			<input type="hidden" id="expiryDate" th:value="${expiryDate}"/>
+			<input type="hidden" id="amount" th:value="${amount}"/>
+
+			<div class="inbound-field">
+				<label for="currentTemperature">입고 구역 온도(℃)</label>
+				<div class="inbound-temp-input">
+					<button type="button" id="tempSignToggle" class="inbound-temp-sign"
+							aria-label="온도 부호, 현재 양수">+</button>
+					<input id="currentTemperature" name="currentTemperature" type="text"
+						   inputmode="decimal" required
+						   placeholder="예: 4.0" autocomplete="off"/>
+				</div>
+				<p class="inbound-field-hint">음수 온도는 왼쪽 <strong>−</strong> 버튼을 누른 뒤 숫자를 입력해 주세요.</p>
+			</div>
+
+			<p id="inbound-form-error" class="inbound-form-error" hidden role="alert"></p>
+
+			<button type="submit" class="inbound-submit">입고 저장</button>
+		</form>
+	</section>
+</main>
+</body>
+</html>

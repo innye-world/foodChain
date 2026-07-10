@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{fragments/layout :: layout('제조사 QR 발급', ~{::head-extra}, ~{::main})}">
+<head>
+	<th:block th:fragment="head-extra">
+		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
+		<link rel="stylesheet" th:href="@{/css/manufacturer-qr.css}"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+		<script th:src="@{/js/manufacturer-qr.js}" defer></script>
+	</th:block>
+</head>
+<body>
+<div th:fragment="main" class="page manufacturer-qr-page">
+	<header class="header">
+		<h1>제조사 QR 발급</h1>
+		<p class="subtitle">테스트용 임의 입고 데이터로 QR을 생성합니다. 스캔 시 입고 온도 입력 페이지로 이동합니다.</p>
+	</header>
+
+	<section class="card manufacturer-qr-card">
+		<div class="manufacturer-qr-layout">
+			<div class="manufacturer-qr-panel">
+				<h2 class="manufacturer-qr-panel__title">QR 코드</h2>
+				<div id="qrcode" class="manufacturer-qr-canvas" th:data-url="${qrUrl}" aria-label="입고 QR 코드"></div>
+				<p class="manufacturer-qr-hint">카메라로 스캔하거나 아래 URL을 확인하세요.</p>
+			</div>
+
+			<div class="manufacturer-qr-panel">
+				<h2 class="manufacturer-qr-panel__title">입고 데이터</h2>
+				<dl class="detail-list manufacturer-qr-detail">
+					<div class="detail-item">
+						<dt>상품 ID</dt>
+						<dd th:text="${payload.productId}">BAB-001</dd>
+					</div>
+					<div class="detail-item">
+						<dt>제조일자</dt>
+						<dd th:text="${payload.mfgDate}">2026-07-01</dd>
+					</div>
+					<div class="detail-item">
+						<dt>유통기한</dt>
+						<dd th:text="${payload.expiryDate}">2026-08-01</dd>
+					</div>
+					<div class="detail-item">
+						<dt>수량</dt>
+						<dd th:text="${payload.amount}">100</dd>
+					</div>
+				</dl>
+
+				<div class="manufacturer-qr-url-box">
+					<label class="manufacturer-qr-url-label" for="qr-url-text">QR URL</label>
+					<div class="manufacturer-qr-url-row">
+						<input id="qr-url-text" class="manufacturer-qr-url-input" type="text" readonly
+							   th:value="${qrUrl}"/>
+						<button type="button" class="btn btn-secondary" id="btn-copy-url">복사</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="manufacturer-qr-actions">
+			<a class="btn btn-primary" th:href="@{/manufacturer/qr}">새 QR 생성</a>
+		</div>
+	</section>
+</div>
+</body>
+</html>

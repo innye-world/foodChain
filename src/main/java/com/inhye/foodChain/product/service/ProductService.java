@@ -71,6 +71,13 @@ public class ProductService {
 				.orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다: " + productId));
 	}
 
+	@Transactional(readOnly = true)
+	public Product findRandomProduct() {
+		String productId = productRepository.findRandomProductId()
+				.orElseThrow(() -> new ResourceNotFoundException("등록된 상품이 없습니다."));
+		return findProduct(productId);
+	}
+
 	@Transactional
 	public Product registerProduct(
 			Long productTypeId,

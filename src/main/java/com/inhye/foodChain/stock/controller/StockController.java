@@ -1,6 +1,7 @@
 package com.inhye.foodChain.stock.controller;
 
 import com.inhye.foodChain.product.service.ProductService;
+import com.inhye.foodChain.stock.domain.StockListSort;
 import com.inhye.foodChain.stock.dto.StockMovementResponse;
 import com.inhye.foodChain.stock.service.StockService;
 
@@ -33,27 +34,33 @@ public class StockController {
 			@RequestParam(required = false) String typeCode,
 			@RequestParam(required = false) String productId,
 			@RequestParam(required = false) String status,
+			@RequestParam(required = false) String sort,
 			Model model) {
-		model.addAttribute("page", stockService.findStocksPage(page, typeCode, productId, status));
+		var listSort = StockListSort.fromParam(sort);
+		model.addAttribute("page", stockService.findStocksPage(page, typeCode, productId, status, listSort));
 		model.addAttribute("productTypes", productService.findAllProductTypes());
 		model.addAttribute("selectedTypeCode", typeCode != null ? typeCode : "");
 		model.addAttribute("selectedProductId", productId != null ? productId : "");
 		model.addAttribute("selectedStatus", status != null ? status : "");
-		model.addAttribute("filterQuery", buildFilterQuery(typeCode, productId, status));
-		model.addAttribute("listReturnQuery", buildListReturnQuery(typeCode, productId, status, page));
+		model.addAttribute("sort", listSort.queryValue() != null ? listSort.queryValue() : "");
+		model.addAttribute("filterQuery", buildFilterQuery(typeCode, productId, status, listSort));
+		model.addAttribute("listReturnQuery", buildListReturnQuery(typeCode, productId, status, page, listSort));
 		return "stock/stock-list";
 	}
 
-	private static String buildFilterQuery(String typeCode, String productId, String status) {
+	private static String buildFilterQuery(
+			String typeCode, String productId, String status, StockListSort sort) {
 		StringBuilder query = new StringBuilder();
 		appendQueryParam(query, "typeCode", typeCode);
 		appendQueryParam(query, "productId", productId);
 		appendQueryParam(query, "status", status);
+		appendQueryParam(query, "sort", sort.queryValue());
 		return query.toString();
 	}
 
-	private static String buildListReturnQuery(String typeCode, String productId, String status, int page) {
-		StringBuilder query = new StringBuilder(buildFilterQuery(typeCode, productId, status));
+	private static String buildListReturnQuery(
+			String typeCode, String productId, String status, int page, StockListSort sort) {
+		StringBuilder query = new StringBuilder(buildFilterQuery(typeCode, productId, status, sort));
 		if (page > 0) {
 			if (!query.isEmpty()) {
 				query.append('&');
@@ -87,16 +94,35 @@ public class StockController {
 		return "stock/stock-form";
 	}
 
+	@GetMapping("/add-temperature")
+	public String addTemperatureForInbound(
+			@RequestParam String productId,
+			@RequestParam LocalDate mfgDate,
+			@RequestParam LocalDate expiryDate,
+			@RequestParam int amount,
+			Model model) {
+		model.addAttribute("product", productService.findProduct(productId));
+		model.addAttribute("productId", productId);
+		model.addAttribute("lotNo", stockService.generateLotNo(productId));
+		model.addAttribute("mfgDate", mfgDate);
+		model.addAttribute("expiryDate", expiryDate);
+		model.addAttribute("amount", amount);
+		return "stock/add-temperature";
+	}
+
 	@GetMapping("/{stockId}")
 	public String stockDetail(
 			@PathVariable Long stockId,
 			@RequestParam(required = false) String typeCode,
 			@RequestParam(required = false) String productId,
 			@RequestParam(required = false) String status,
+			@RequestParam(required = false) String sort,
 			@RequestParam(defaultValue = "0") int page,
 			Model model) {
 		model.addAttribute("stock", stockService.findStockById(stockId));
-		model.addAttribute("listReturnQuery", buildListReturnQuery(typeCode, productId, status, page));
+		model.addAttribute(
+				"listReturnQuery",
+				buildListReturnQuery(typeCode, productId, status, page, StockListSort.fromParam(sort)));
 		return "stock/stock-detail";
 	}
 
@@ -119,6 +145,6 @@ public class StockController {
 			@RequestParam int amount,
 			@RequestParam BigDecimal currentTemperature) {
 		stockService.registerStock(productId, lotNo, mfgDate, expiryDate, amount, currentTemperature);
-		return new RedirectView("/stock");
+		return new RedirectView("/stock?sort=received");
 	}
 }

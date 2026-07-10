@@ -8,6 +8,7 @@ import com.inhye.foodChain.product.domain.Product;
 import com.inhye.foodChain.product.repository.ProductRepository;
 import com.inhye.foodChain.stock.domain.MovementType;
 import com.inhye.foodChain.stock.domain.Stock;
+import com.inhye.foodChain.stock.domain.StockListSort;
 import com.inhye.foodChain.stock.domain.StockMovement;
 import com.inhye.foodChain.stock.domain.StockStatus;
 import com.inhye.foodChain.stock.repository.StockMovementRepository;
@@ -40,6 +41,7 @@ public class StockService {
 
 	// 대시보드 차트
 	private static final DateTimeFormatter CHART_LABEL_FORMAT = DateTimeFormatter.ofPattern("MM-dd");
+	private static final DateTimeFormatter LOT_DATE_FORMAT = DateTimeFormatter.BASIC_ISO_DATE;
 	private static final List<MovementType> CHART_MOVEMENT_TYPES = List.of(MovementType.INBOUND, MovementType.OUTBOUND, MovementType.DISPOSAL);
 	private static final Map<MovementType, String> CHART_COLORS = Map.of(
 			MovementType.INBOUND, "#22c55e",
@@ -55,16 +57,26 @@ public class StockService {
 
 	@Transactional(readOnly = true)
 	public Page<Stock> findStocksPage(int page) {
-		return findStocksPage(page, null, null, null);
+		return findStocksPage(page, null, null, null, StockListSort.FEFO);
 	}
 
 	@Transactional(readOnly = true)
 	public Page<Stock> findStocksPage(int page, String typeCode, String productId, String status) {
-		return stockRepository.findByFilters(
-				blankToNull(typeCode),
-				blankToNull(productId),
-				resolveStatuses(status),
-				PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE));
+		return findStocksPage(page, typeCode, productId, status, StockListSort.FEFO);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Stock> findStocksPage(
+			int page, String typeCode, String productId, String status, StockListSort sort) {
+		var pageable = PageRequest.of(Math.max(page, 0), PaginationConstants.PAGE_SIZE);
+		var resolvedTypeCode = blankToNull(typeCode);
+		var resolvedProductId = blankToNull(productId);
+		var statuses = resolveStatuses(status);
+		if (sort == StockListSort.RECEIVED) {
+			return stockRepository.findByFiltersOrderByReceivedDesc(
+					resolvedTypeCode, resolvedProductId, statuses, pageable);
+		}
+		return stockRepository.findByFilters(resolvedTypeCode, resolvedProductId, statuses, pageable);
 	}
 
 	private static List<StockStatus> resolveStatuses(String status) {
@@ -156,6 +168,22 @@ public class StockService {
 		saveMovement(stock, movementType, amount, reason);
 
 		return stock;
+	}
+
+	/**
+	 * 입고 LOT 자동 생성.
+	 * 형식: LOT-{yyyyMMdd}-{일련번호 3자리} (상품·일자 기준)
+	 */
+	@Transactional(readOnly = true)
+	public String generateLotNo(String productId) {
+		String datePart = LocalDate.now().format(LOT_DATE_FORMAT);
+		String prefix = "LOT-" + datePart + "-";
+		long existingCount = stockRepository.countByProductIdAndLotNoStartingWith(productId, prefix + "%");
+		long nextSeq = existingCount + 1;
+		if (nextSeq > 999) {
+			throw new IllegalStateException("오늘 해당 상품의 LOT 일련번호 한도를 초과했습니다: " + productId);
+		}
+		return prefix + String.format("%03d", nextSeq);
 	}
 
 	/**

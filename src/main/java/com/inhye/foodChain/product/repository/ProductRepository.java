@@ -39,4 +39,8 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 			AND p.createdAt < :weekEnd
 			""")
     int countNewProductsInThisWeek(LocalDateTime weekStart, LocalDateTime weekEnd);
+
+	/** 제조사 QR 시뮬레이터: 임의 상품 1건 */
+	@Query(value = "SELECT p.product_id FROM product p ORDER BY RAND() LIMIT 1", nativeQuery = true)
+	Optional<String> findRandomProductId();
 }
