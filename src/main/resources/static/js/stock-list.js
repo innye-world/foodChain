@@ -82,4 +82,16 @@
 		typeSelect.value = initialTypeCode;
 		loadProducts(initialTypeCode, initialProductId);
 	}
+
+	const stockTableBody = document.querySelector('.table--stock-list tbody');
+	if (stockTableBody) {
+		stockTableBody.addEventListener('click', function (event) {
+			const row = event.target.closest('.stock-row-link');
+			if (!row || !row.dataset.href) {
+				return;
+			}
+			const returnQuery = row.dataset.returnQuery || '';
+			location.href = row.dataset.href + (returnQuery ? '?' + returnQuery : '');
+		});
+	}
 })();

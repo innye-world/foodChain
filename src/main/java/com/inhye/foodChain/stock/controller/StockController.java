@@ -40,6 +40,7 @@ public class StockController {
 		model.addAttribute("selectedProductId", productId != null ? productId : "");
 		model.addAttribute("selectedStatus", status != null ? status : "");
 		model.addAttribute("filterQuery", buildFilterQuery(typeCode, productId, status));
+		model.addAttribute("listReturnQuery", buildListReturnQuery(typeCode, productId, status, page));
 		return "stock/stock-list";
 	}
 
@@ -48,6 +49,17 @@ public class StockController {
 		appendQueryParam(query, "typeCode", typeCode);
 		appendQueryParam(query, "productId", productId);
 		appendQueryParam(query, "status", status);
+		return query.toString();
+	}
+
+	private static String buildListReturnQuery(String typeCode, String productId, String status, int page) {
+		StringBuilder query = new StringBuilder(buildFilterQuery(typeCode, productId, status));
+		if (page > 0) {
+			if (!query.isEmpty()) {
+				query.append('&');
+			}
+			query.append("page=").append(page);
+		}
 		return query.toString();
 	}
 
@@ -76,8 +88,15 @@ public class StockController {
 	}
 
 	@GetMapping("/{stockId}")
-	public String stockDetail(@PathVariable Long stockId, Model model) {
+	public String stockDetail(
+			@PathVariable Long stockId,
+			@RequestParam(required = false) String typeCode,
+			@RequestParam(required = false) String productId,
+			@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
 		model.addAttribute("stock", stockService.findStockById(stockId));
+		model.addAttribute("listReturnQuery", buildListReturnQuery(typeCode, productId, status, page));
 		return "stock/stock-detail";
 	}
 

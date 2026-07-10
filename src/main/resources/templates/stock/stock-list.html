@@ -58,7 +58,7 @@
 	</p>
 	<section class="card">
 		<div class="table-wrap" th:if="${!page.empty}">
-			<table>
+			<table class="table--stock-list">
 				<thead>
 				<tr>
 					<th scope="col">상품 ID</th>
@@ -72,8 +72,9 @@
 				</thead>
 				<tbody>
 				<tr th:each="stock : ${page.content}"
-					th:onclick="|location.href='@{/stock/{id}(id=${stock.stockId})}'|"
-					class="table-row-link">
+					th:attr="data-href=@{/stock/{id}(id=${stock.stockId})}"
+					th:data-return-query="${listReturnQuery}"
+					class="table-row-link stock-row-link">
 					<td th:text="${stock.productId}">BAB-001</td>
 					<td th:text="${stock.productName}">삼각김밥</td>
 					<td th:text="${stock.lotNo}">LOT-2605220001</td>
