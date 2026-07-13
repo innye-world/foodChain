@@ -188,14 +188,53 @@
 	});
 
 	form.addEventListener('submit', function (event) {
+		event.preventDefault();
 		syncExpiryMinDate();
 		const message = validateForm();
 		if (message) {
-			event.preventDefault();
 			setValidationError(message);
 			form.reportValidity();
 			return;
 		}
 		setValidationError('');
+
+		const submitButton = form.querySelector('button[type="submit"]');
+		if (submitButton) {
+			submitButton.disabled = true;
+			submitButton.textContent = '저장 중…';
+		}
+
+		// 수동 입고: 토큰 없음 (QR 1회성과 구분). API로 보내 예외 메시지를 화면에 표시.
+		fetch('/api/stocks', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+			},
+			body: JSON.stringify({
+				productId: productSelect.value,
+				lotNo: document.getElementById('lotNo').value.trim(),
+				mfgDate: mfgDateInput.value,
+				expiryDate: expiryDateInput.value,
+				amount: Number(document.getElementById('amount').value),
+				currentTemperature: Number(document.getElementById('currentTemperature').value),
+			}),
+		})
+			.then(function (response) {
+				if (response.ok) {
+					window.location.href = '/stock?sort=received';
+					return null;
+				}
+				return response.json().then(function (body) {
+					throw new Error(body && body.message ? body.message : '재고 등록에 실패했습니다.');
+				});
+			})
+			.catch(function (error) {
+				setValidationError(error.message || '재고 등록에 실패했습니다.');
+				if (submitButton) {
+					submitButton.disabled = false;
+					submitButton.textContent = '저장';
+				}
+			});
 	});
 })();

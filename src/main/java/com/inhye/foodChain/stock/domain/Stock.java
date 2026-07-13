@@ -50,8 +50,8 @@ public class Stock {
 	@Column(name = "lot_no", length = 20, nullable = false)
 	private String lotNo;
 
-	// QR 코드는 1회성. 수동 입고는 null
-	@Column(name = "inbound_token", length = 36)
+	// QR 코드는 1회성. 수동 입고는 null (UNIQUE는 NULL 중복 허용)
+	@Column(name = "inbound_token", length = 36, nullable = true)
 	private String inboundToken;
 
 	@Column(name = "mfg_date", nullable = false)

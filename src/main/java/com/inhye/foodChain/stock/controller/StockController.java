@@ -129,14 +129,8 @@ public class StockController {
 	}
 
 	/**
-	 * 	Swagger도 겸용으로 사용할 수 있도록 thymeleaf에 연결한 컨트롤러도 추가 (추후 제거 예정)
-	 * @param productId
-	 * @param lotNo
-	 * @param mfgDate
-	 * @param expiryDate
-	 * @param amount
-	 * @param currentTemperature
-	 * @return
+	 * 유사시 수동 입고 (폼). QR 입고는 {@code POST /api/stocks} 사용.
+	 * inboundToken 없음 → null 저장.
 	 */
 	@PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public RedirectView registerStockForm(
@@ -147,7 +141,8 @@ public class StockController {
 			@RequestParam int amount,
 			@RequestParam BigDecimal currentTemperature,
 			@RequestParam(required = false) String inboundToken) {
-		stockService.registerStock(productId, lotNo, mfgDate, expiryDate, amount, currentTemperature, inboundToken);
+		stockService.registerStock(
+				productId, lotNo, mfgDate, expiryDate, amount, currentTemperature, inboundToken);
 		return new RedirectView("/stock?sort=received");
 	}
 }
