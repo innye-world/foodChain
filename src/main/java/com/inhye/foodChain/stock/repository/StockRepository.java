@@ -168,4 +168,6 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			""")
 	long countByProductIdAndLotNoStartingWith(
 			@Param("productId") String productId, @Param("lotPrefixPattern") String lotPrefixPattern);
+
+	boolean existsByInboundToken(String inboundToken);
 }

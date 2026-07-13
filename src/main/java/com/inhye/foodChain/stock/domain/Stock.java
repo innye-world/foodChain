@@ -23,7 +23,10 @@ import lombok.*;
 @Entity
 @Table(
 		name = "stock",
-		uniqueConstraints = @UniqueConstraint(name = "uk_stock_product_lot", columnNames = {"product_id", "lot_no"}),
+		uniqueConstraints = {
+				@UniqueConstraint(name = "uk_stock_product_lot", columnNames = {"product_id", "lot_no"}),
+				@UniqueConstraint(name = "uk_stock_inbound_token", columnNames = "inbound_token")
+		},
 		indexes = {
 				@Index(name = "idx_stock_product_fefo", columnList = "product_id, expiry_date, received_at"),
 				@Index(name = "idx_stock_status", columnList = "stock_status")
@@ -46,6 +49,10 @@ public class Stock {
 
 	@Column(name = "lot_no", length = 20, nullable = false)
 	private String lotNo;
+
+	// QR 코드는 1회성. 수동 입고는 null
+	@Column(name = "inbound_token", length = 36)
+	private String inboundToken;
 
 	@Column(name = "mfg_date", nullable = false)
 	private LocalDate mfgDate;

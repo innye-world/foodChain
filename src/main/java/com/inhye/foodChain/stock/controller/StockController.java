@@ -100,6 +100,7 @@ public class StockController {
 			@RequestParam LocalDate mfgDate,
 			@RequestParam LocalDate expiryDate,
 			@RequestParam int amount,
+			@RequestParam("token") String inboundToken,
 			Model model) {
 		model.addAttribute("product", productService.findProduct(productId));
 		model.addAttribute("productId", productId);
@@ -107,6 +108,7 @@ public class StockController {
 		model.addAttribute("mfgDate", mfgDate);
 		model.addAttribute("expiryDate", expiryDate);
 		model.addAttribute("amount", amount);
+		model.addAttribute("inboundToken", inboundToken);
 		return "stock/add-temperature";
 	}
 
@@ -143,8 +145,9 @@ public class StockController {
 			@RequestParam LocalDate mfgDate,
 			@RequestParam LocalDate expiryDate,
 			@RequestParam int amount,
-			@RequestParam BigDecimal currentTemperature) {
-		stockService.registerStock(productId, lotNo, mfgDate, expiryDate, amount, currentTemperature);
+			@RequestParam BigDecimal currentTemperature,
+			@RequestParam(required = false) String inboundToken) {
+		stockService.registerStock(productId, lotNo, mfgDate, expiryDate, amount, currentTemperature, inboundToken);
 		return new RedirectView("/stock?sort=received");
 	}
 }

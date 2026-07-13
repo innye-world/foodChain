@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-	  th:replace="~{fragments/layout :: layout('제조사 QR 발급', ~{::head-extra}, ~{::main})}">
+	  th:replace="~{fragments/layout :: layout('테스트 입고 QR', ~{::head-extra}, ~{::main})}">
 <head>
 	<th:block th:fragment="head-extra">
 		<link rel="stylesheet" th:href="@{/css/product-types.css}"/>
@@ -12,7 +12,7 @@
 <body>
 <div th:fragment="main" class="page manufacturer-qr-page">
 	<header class="header">
-		<h1>제조사 QR 발급</h1>
+		<h1>테스트 입고 QR</h1>
 		<p class="subtitle">테스트용 임의 입고 데이터로 QR을 생성합니다. 스캔 시 입고 온도 입력 페이지로 이동합니다.</p>
 	</header>
 

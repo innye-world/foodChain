@@ -124,7 +124,13 @@ public class StockService {
 			LocalDate mfgDate,
 			LocalDate expiryDate,
 			int amount,
-			BigDecimal currentTemperature) {
+			BigDecimal currentTemperature,
+			String inboundToken) {
+		String token = blankToNull(inboundToken);
+		if (token != null && stockRepository.existsByInboundToken(token)) {
+			throw new IllegalStateException("이미 처리한 배치입니다.");
+		}
+
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다: " + productId));
 
@@ -152,6 +158,7 @@ public class StockService {
 								.receivedAt(LocalDateTime.now())
 								.amount(amount)
 								.stockStatus(stockStatus)
+								.inboundToken(token)
 								.build());
 
 		// 2. 재고 히스토리 데이터에도 추가 (자주 이슈가 발생하는 배치의 원인 트래킹을 위한 과정)

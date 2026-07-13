@@ -46,12 +46,16 @@ public class ApiExceptionHandler {
 	}
 
 	/*
-		재고 부족 (Hold 제외)
+		재고 부족 (Hold 제외), 이미 처리한 QR 토큰
 	 */
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ApiErrorResponse> handleIllegalState(
 			IllegalStateException ex, HttpServletRequest request) {
-		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+		HttpStatus status =
+				ex.getMessage() != null && ex.getMessage().contains("이미 처리한 배치")
+						? HttpStatus.CONFLICT
+						: HttpStatus.BAD_REQUEST;
+		return build(status, ex.getMessage(), request);
 	}
 
 	/*

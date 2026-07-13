@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.UUID;
+
 /**
  * 제조사 서비스라 가정$
  *
@@ -27,12 +29,14 @@ public class ManufacturerSimulatorController {
     public String qrPage(Model model) {
         String qrDomain = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         ManufacturerQrPayload payload = manufacturerSimulatorService.generateRandomQrPayload();
+        String token = UUID.randomUUID().toString();
 
         String qrUrl = qrDomain + "/stock/add-temperature"
                 + "?productId=" + payload.productId()
                 + "&mfgDate=" + payload.mfgDate()
                 + "&expiryDate=" + payload.expiryDate()
-                + "&amount=" + payload.amount();
+                + "&amount=" + payload.amount()
+                + "&token=" + token;
 
         model.addAttribute("qrUrl", qrUrl);
         model.addAttribute("payload", payload);

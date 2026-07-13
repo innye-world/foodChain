@@ -10,28 +10,41 @@ function toggleNav(key) {
 
 function activateSidebar() {
 	const path = window.location.pathname;
+	const items = Array.from(document.querySelectorAll('.sub-item'));
+	let bestItem = null;
+	let bestHrefLength = -1;
 
-	document.querySelectorAll('.sub-item').forEach((item) => {
+	items.forEach((item) => {
 		item.classList.remove('active');
 		const href = item.getAttribute('href');
 		if (!href) {
 			return;
 		}
-		const matched = path === href || (href !== '/' && path.startsWith(href));
+		// /stock 이 /stock/history 까지 매칭되지 않도록, 정확히 같거나 href/ 로 이어질 때만 후보
+		const matched = path === href || (href !== '/' && path.startsWith(href + '/'));
 		if (!matched) {
 			return;
 		}
-
-		item.classList.add('active');
-		const subNav = item.closest('.sub-nav');
-		if (!subNav) {
-			return;
+		// 여러 후보 중 가장 긴 경로만 활성화 (예: /stock/history > /stock)
+		if (href.length > bestHrefLength) {
+			bestItem = item;
+			bestHrefLength = href.length;
 		}
-		const key = subNav.id.replace('sub-', '');
-		subNav.classList.add('open');
-		document.getElementById('chevron-' + key)?.classList.add('open');
-		subNav.previousElementSibling?.classList.add('active');
 	});
+
+	if (!bestItem) {
+		return;
+	}
+
+	bestItem.classList.add('active');
+	const subNav = bestItem.closest('.sub-nav');
+	if (!subNav) {
+		return;
+	}
+	const key = subNav.id.replace('sub-', '');
+	subNav.classList.add('open');
+	document.getElementById('chevron-' + key)?.classList.add('open');
+	subNav.previousElementSibling?.classList.add('active');
 }
 
 function initMobileNav() {

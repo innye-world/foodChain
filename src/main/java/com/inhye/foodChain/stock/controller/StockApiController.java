@@ -54,7 +54,7 @@ public class StockApiController {
 				content = @Content(schema = @Schema(implementation = StockResponse.class))),
 		@ApiResponse(responseCode = "400", description = "요청 값 오류"),
 		@ApiResponse(responseCode = "404", description = "상품 미존재"),
-		@ApiResponse(responseCode = "409", description = "중복 LOT 등 제약 조건 위반"),
+		@ApiResponse(responseCode = "409", description = "중복 LOT·이미 처리한 QR 토큰 등 제약 조건 위반"),
 		@ApiResponse(responseCode = "503", description = "데이터베이스 연결 불가"),
 		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
 	})
@@ -68,7 +68,8 @@ public class StockApiController {
 						request.mfgDate(),
 						request.expiryDate(),
 						request.amount(),
-						request.currentTemperature()));
+						request.currentTemperature(),
+						request.inboundToken()));
 	}
 
 	@Operation(

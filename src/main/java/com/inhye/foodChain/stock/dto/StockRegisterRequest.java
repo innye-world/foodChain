@@ -14,5 +14,5 @@ public record StockRegisterRequest(
 		@NotNull @Schema(description = "제조일자", example = "2026-01-01") LocalDate mfgDate,
 		@NotNull @Schema(description = "유통기한", example = "2026-06-01") LocalDate expiryDate,
 		@Positive @Schema(description = "입고 수량", example = "100") int amount,
-		@NotNull @Schema(description = "입고 구역 현재 온도(℃)", example = "4.0")
-				BigDecimal currentTemperature) {}
+		@NotNull @Schema(description = "입고 구역 현재 온도(℃)", example = "4.0") BigDecimal currentTemperature,
+		@Schema(description = "토큰") String inboundToken) {}

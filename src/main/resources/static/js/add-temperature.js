@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
 				mfgDate: document.getElementById('mfgDate').value,
 				expiryDate: document.getElementById('expiryDate').value,
 				amount: Number(document.getElementById('amount').value),
-				currentTemperature: temperature
+				currentTemperature: temperature,
+				inboundToken: document.getElementById('inboundToken').value
 			})
 		})
 			.then(function (response) {
