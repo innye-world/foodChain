@@ -8,8 +8,41 @@
 	const expiryDateInput = document.getElementById('expiryDate');
 	const expiryDateHint = document.getElementById('expiry-date-hint');
 
+	const lotNoInput = document.getElementById('lotNo');
+
 	if (!form || !typeSelect || !productSelect) {
 		return;
+	}
+
+	function clearLotNo() {
+		if (!lotNoInput) {
+			return;
+		}
+		lotNoInput.value = '';
+	}
+
+	function loadNextLotNo(productId) {
+		if (!lotNoInput || !productId) {
+			clearLotNo();
+			return;
+		}
+		lotNoInput.value = '채번 중…';
+		fetch('/api/stocks/next-lot-no?productId=' + encodeURIComponent(productId), {
+			headers: { Accept: 'application/json' },
+		})
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error('lot load failed');
+				}
+				return response.json();
+			})
+			.then(function (body) {
+				lotNoInput.value = body.lotNo || '';
+			})
+			.catch(function () {
+				lotNoInput.value = '';
+				setValidationError('LOT 번호를 불러오지 못했습니다. 상품을 다시 선택해 주세요.');
+			});
 	}
 
 	function setHint(message, isError) {
@@ -108,7 +141,7 @@
 
 	function validateForm() {
 		const productId = productSelect.value;
-		const lotNo = document.getElementById('lotNo')?.value.trim();
+		const lotNo = lotNoInput?.value.trim();
 		const mfgDate = mfgDateInput?.value;
 		const expiryDate = expiryDateInput?.value;
 		const temperatureRaw = document.getElementById('currentTemperature')?.value;
@@ -117,8 +150,8 @@
 		if (!productId) {
 			return '상품을 선택해 주세요.';
 		}
-		if (!lotNo) {
-			return 'LOT 번호를 입력해 주세요.';
+		if (!lotNo || lotNo === '채번 중…') {
+			return 'LOT 번호 채번을 기다려 주세요.';
 		}
 		if (!mfgDate) {
 			return '제조일자를 입력해 주세요.';
@@ -157,6 +190,7 @@
 	typeSelect.addEventListener('change', function () {
 		const typeCode = typeSelect.value;
 		setHint('');
+		clearLotNo();
 
 		if (!typeCode) {
 			resetProductSelect('먼저 유형을 선택하세요');
@@ -187,6 +221,11 @@
 			});
 	});
 
+	productSelect.addEventListener('change', function () {
+		setValidationError('');
+		loadNextLotNo(productSelect.value);
+	});
+
 	form.addEventListener('submit', function (event) {
 		event.preventDefault();
 		syncExpiryMinDate();
@@ -204,7 +243,7 @@
 			submitButton.textContent = '저장 중…';
 		}
 
-		// 수동 입고: 토큰 없음 (QR 1회성과 구분). API로 보내 예외 메시지를 화면에 표시.
+		// 수동 입고: 토큰 없음. LOT는 서버에서 최종 채번.
 		fetch('/api/stocks', {
 			method: 'POST',
 			headers: {
@@ -213,7 +252,6 @@
 			},
 			body: JSON.stringify({
 				productId: productSelect.value,
-				lotNo: document.getElementById('lotNo').value.trim(),
 				mfgDate: mfgDateInput.value,
 				expiryDate: expiryDateInput.value,
 				amount: Number(document.getElementById('amount').value),
@@ -234,6 +272,9 @@
 				if (submitButton) {
 					submitButton.disabled = false;
 					submitButton.textContent = '저장';
+				}
+				if (productSelect.value) {
+					loadNextLotNo(productSelect.value);
 				}
 			});
 	});

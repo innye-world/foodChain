@@ -109,18 +109,11 @@ public class StockService {
 
 	/**
 	 * 입고 등록 시에는 무조건 STOCK, STOCK_MOVEMENT 테이블 모두에 데이터를 넣는다.
-	 * @param productId
-	 * @param lotNo
-	 * @param mfgDate
-	 * @param expiryDate
-	 * @param amount
-	 * @param currentTemperature
-	 * @return
+	 * LOT 번호는 상품·당일 기준 서버 자동 채번.
 	 */
 	@Transactional
 	public Stock registerStock(
 			String productId,
-			String lotNo,
 			LocalDate mfgDate,
 			LocalDate expiryDate,
 			int amount,
@@ -133,6 +126,9 @@ public class StockService {
 
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다: " + productId));
+
+		// QR·수동 공통: 저장 직전 서버에서 LOT 채번 (클라이언트가 보낸 값 신뢰하지 않음)
+		String lotNo = generateLotNo(productId);
 
 		// 현재 온도가 제품의 적정온도 구간에 들어가 있지 않으면 stockStatus는 hold로 저장한다.
 		// Double은 부동소수라서 소숫점이 있는 온도, 무게 객체에는 적합하지 않음
@@ -179,14 +175,32 @@ public class StockService {
 
 	/**
 	 * 입고 LOT 자동 생성.
-	 * 형식: LOT-{yyyyMMdd}-{일련번호 3자리} (상품·일자 기준)
+	 * 형식: LOT-{yyyyMMdd}-{일련번호 3자리} (상품·일자 기준, 기존 최대 번호 + 1)
 	 */
 	@Transactional(readOnly = true)
 	public String generateLotNo(String productId) {
 		String datePart = LocalDate.now().format(LOT_DATE_FORMAT);
 		String prefix = "LOT-" + datePart + "-";
-		long existingCount = stockRepository.countByProductIdAndLotNoStartingWith(productId, prefix + "%");
-		long nextSeq = existingCount + 1;
+		List<String> existingLotNos =
+				stockRepository.findLotNosByProductIdAndLotNoStartingWith(productId, prefix + "%");
+
+		int maxSeq = 0;
+		for (String existingLotNo : existingLotNos) {
+			if (existingLotNo == null || !existingLotNo.startsWith(prefix)) {
+				continue;
+			}
+			String seqPart = existingLotNo.substring(prefix.length());
+			if (seqPart.length() != 3) {
+				continue;
+			}
+			try {
+				maxSeq = Math.max(maxSeq, Integer.parseInt(seqPart));
+			} catch (NumberFormatException ignored) {
+				// 수동으로 넣은 비정형 LOT는 채번에서 제외
+			}
+		}
+
+		int nextSeq = maxSeq + 1;
 		if (nextSeq > 999) {
 			throw new IllegalStateException("오늘 해당 상품의 LOT 일련번호 한도를 초과했습니다: " + productId);
 		}

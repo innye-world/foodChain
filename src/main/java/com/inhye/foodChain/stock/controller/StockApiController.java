@@ -1,5 +1,6 @@
 package com.inhye.foodChain.stock.controller;
 
+import com.inhye.foodChain.stock.dto.NextLotNoResponse;
 import com.inhye.foodChain.stock.dto.StockRegisterRequest;
 import com.inhye.foodChain.stock.dto.StockResponse;
 import com.inhye.foodChain.stock.service.StockService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,8 +47,20 @@ public class StockApiController {
 	}
 
 	@Operation(
+			summary = "다음 LOT 번호 조회",
+			description = "상품·오늘 날짜 기준으로 다음 입고 LOT 번호를 미리 조회합니다. 실제 저장 시에는 서버에서 다시 채번합니다.")
+	@ApiResponse(
+			responseCode = "200",
+			description = "조회 성공",
+			content = @Content(schema = @Schema(implementation = NextLotNoResponse.class)))
+	@GetMapping("/next-lot-no")
+	public NextLotNoResponse nextLotNo(@RequestParam String productId) {
+		return new NextLotNoResponse(productId, stockService.generateLotNo(productId));
+	}
+
+	@Operation(
 			summary = "재고 입고",
-			description = "새 LOT를 등록합니다. 입고 시에는 구역 온도를 입력하고 상품 등록 시에 저장했던 저장 온도와 비교합니다. 저장 온도에 적합하지 않은 상태라면 HOLD로 저장합니다. HOLD로 저장되는 경우에는 재고 이력 데이터에 히스토리를 추가합니다.")
+			description = "새 LOT를 등록합니다. LOT 번호는 서버에서 자동 채번합니다. 입고 시 구역 온도를 상품 보관 온도와 비교하며, 부적합하면 HOLD로 저장합니다.")
 	@ApiResponses({
 		@ApiResponse(
 				responseCode = "201",
@@ -64,7 +78,6 @@ public class StockApiController {
 		return StockResponse.from(
 				stockService.registerStock(
 						request.productId(),
-						request.lotNo(),
 						request.mfgDate(),
 						request.expiryDate(),
 						request.amount(),

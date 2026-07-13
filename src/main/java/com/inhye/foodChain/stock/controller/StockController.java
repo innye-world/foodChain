@@ -130,19 +130,18 @@ public class StockController {
 
 	/**
 	 * 유사시 수동 입고 (폼). QR 입고는 {@code POST /api/stocks} 사용.
-	 * inboundToken 없음 → null 저장.
+	 * LOT는 서버에서 자동 채번. inboundToken 없음 → null 저장.
 	 */
 	@PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public RedirectView registerStockForm(
 			@RequestParam String productId,
-			@RequestParam String lotNo,
 			@RequestParam LocalDate mfgDate,
 			@RequestParam LocalDate expiryDate,
 			@RequestParam int amount,
 			@RequestParam BigDecimal currentTemperature,
 			@RequestParam(required = false) String inboundToken) {
 		stockService.registerStock(
-				productId, lotNo, mfgDate, expiryDate, amount, currentTemperature, inboundToken);
+				productId, mfgDate, expiryDate, amount, currentTemperature, inboundToken);
 		return new RedirectView("/stock?sort=received");
 	}
 }

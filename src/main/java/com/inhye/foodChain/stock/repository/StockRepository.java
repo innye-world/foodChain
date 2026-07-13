@@ -158,15 +158,15 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 			""")
 	List<Object[]> sumAmountGroupByProductType();
 
-	/** 입고 LOT 자동 생성: 상품·일자별 기존 LOT 개수 */
+	/** 입고 LOT 자동 생성: 상품·일자별 기존 LOT 번호 목록 */
 	@Query(
 			"""
-			SELECT COUNT(s) FROM Stock s
+			SELECT s.lotNo FROM Stock s
 			JOIN s.product p
 			WHERE p.productId = :productId
 			AND s.lotNo LIKE :lotPrefixPattern
 			""")
-	long countByProductIdAndLotNoStartingWith(
+	List<String> findLotNosByProductIdAndLotNoStartingWith(
 			@Param("productId") String productId, @Param("lotPrefixPattern") String lotPrefixPattern);
 
 	boolean existsByInboundToken(String inboundToken);

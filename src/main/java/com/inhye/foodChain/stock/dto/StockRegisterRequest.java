@@ -10,9 +10,12 @@ import java.time.LocalDate;
 @Schema(description = "재고 입고 요청")
 public record StockRegisterRequest(
 		@NotBlank @Schema(description = "상품 ID", example = "BAB-001") String productId,
-		@NotBlank @Schema(description = "LOT 번호", example = "LOT-20250101-001") String lotNo,
+		@Schema(
+						description = "LOT 번호 (선택, 무시됨). 서버에서 상품·일자 기준으로 자동 채번합니다.",
+						example = "LOT-20250101-001")
+				String lotNo,
 		@NotNull @Schema(description = "제조일자", example = "2026-01-01") LocalDate mfgDate,
 		@NotNull @Schema(description = "유통기한", example = "2026-06-01") LocalDate expiryDate,
 		@Positive @Schema(description = "입고 수량", example = "100") int amount,
 		@NotNull @Schema(description = "입고 구역 현재 온도(℃)", example = "4.0") BigDecimal currentTemperature,
-		@Schema(description = "토큰") String inboundToken) {}
+		@Schema(description = "QR 1회성 토큰 (수동 입고 시 생략)") String inboundToken) {}
